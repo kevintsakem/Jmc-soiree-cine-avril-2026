@@ -72,6 +72,8 @@ app.get('/api', async (req, res) => {
       return await handleScan(req.query.ticket_id, res);
     } else if (action === 'list') {
       return await handleList(res);
+    } else if (action === 'delete') {
+      return await handleDelete(req.query.ticket_id, res);
     } else if (action === 'export') {
       return await handleExport(res);
     } else {
@@ -148,6 +150,20 @@ async function handleScan(ticketId, res) {
   guestData.scanned_at  = scanTime;
 
   return res.json({ status: 'success', message: 'Ticket scanné avec succès !', data: guestData });
+}
+
+// =============================================
+// DELETE — Supprimer une inscription
+// =============================================
+async function handleDelete(ticketId, res) {
+  if (!ticketId) {
+    return res.json({ status: 'error', message: 'ticket_id manquant' });
+  }
+  const result = await pool.query('DELETE FROM inscriptions WHERE ticket_id = $1', [ticketId]);
+  if (result.rowCount === 0) {
+    return res.json({ status: 'error', message: 'Ticket introuvable.' });
+  }
+  return res.json({ status: 'success', message: 'Inscription supprimée.' });
 }
 
 // =============================================

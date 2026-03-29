@@ -651,6 +651,7 @@
           <input type="text" id="search-input" placeholder="Rechercher par nom, téléphone ou ticket..." oninput="filterGuests()">
         </div>
         <button class="btn-outline" onclick="loadGuestList()"><span id="refresh-icon">↻</span> Rafraîchir</button>
+        <button class="btn-gold" onclick="openAddModal()">+ Ajouter manuellement</button>
         <a class="btn-outline" href="/api?action=export" download style="text-decoration:none;">⬇ Exporter Excel</a>
       </div>
 
@@ -669,10 +670,34 @@
               <th>Église</th>
               <th>Ticket ID</th>
               <th>Statut</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody id="guest-table-body"></tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL — Ajouter manuellement -->
+  <div id="add-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2000;display:none;align-items:center;justify-content:center;">
+    <div style="background:var(--navy-mid);border:1px solid var(--gold-dim);border-radius:12px;padding:2rem;width:90%;max-width:480px;">
+      <h3 style="font-family:var(--font-display);color:var(--gold);margin-bottom:1.5rem;">Ajouter une inscription</h3>
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <input id="add-name"   type="text"   placeholder="Nom complet *"  style="padding:0.75rem;border-radius:8px;border:1px solid var(--white-20);background:var(--navy);color:var(--white-90);">
+        <select id="add-gender" style="padding:0.75rem;border-radius:8px;border:1px solid var(--white-20);background:var(--navy);color:var(--white-90);">
+          <option value="">Sexe *</option>
+          <option value="Homme">Homme</option>
+          <option value="Femme">Femme</option>
+        </select>
+        <input id="add-phone"  type="tel"    placeholder="Téléphone *"    style="padding:0.75rem;border-radius:8px;border:1px solid var(--white-20);background:var(--navy);color:var(--white-90);">
+        <input id="add-church" type="text"   placeholder="Église *"       style="padding:0.75rem;border-radius:8px;border:1px solid var(--white-20);background:var(--navy);color:var(--white-90);">
+        <input id="add-email"  type="email"  placeholder="Email (optionnel)" style="padding:0.75rem;border-radius:8px;border:1px solid var(--white-20);background:var(--navy);color:var(--white-90);">
+        <p id="add-modal-error" style="color:#e74c3c;font-size:0.85rem;display:none;"></p>
+        <div style="display:flex;gap:1rem;justify-content:flex-end;">
+          <button class="btn-outline" onclick="closeAddModal()">Annuler</button>
+          <button class="btn-gold"    onclick="submitManualAdd()">Ajouter</button>
+        </div>
       </div>
     </div>
   </div>
@@ -933,6 +958,9 @@
               ${g.scan_status === 'Scanné' ? 'Scanné' : 'En attente'}
             </span>
           </td>
+          <td>
+            <button onclick="deleteGuest('${g.ticket_id}')" style="background:transparent;border:1px solid #e74c3c;color:#e74c3c;padding:0.3rem 0.7rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">🗑 Supprimer</button>
+          </td>
         </tr>
       `).join('');
     }
@@ -956,6 +984,80 @@
         (g.church || '').toLowerCase().includes(query)
       );
       renderGuestList(filtered);
+    }
+
+    // =============================================
+    // SUPPRIMER UNE INSCRIPTION
+    // =============================================
+    async function deleteGuest(ticketId) {
+      if (!confirm(`Supprimer l'inscription avec le ticket ${ticketId} ?`)) return;
+      try {
+        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=delete&ticket_id=${encodeURIComponent(ticketId)}`);
+        const result = await res.json();
+        if (result.status === 'success') {
+          await loadGuestList();
+        } else {
+          alert('Erreur : ' + result.message);
+        }
+      } catch (err) {
+        alert('Erreur de connexion.');
+      }
+    }
+
+    // =============================================
+    // AJOUTER MANUELLEMENT
+    // =============================================
+    function generateTicketId() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let id = 'JMC-';
+      for (let i = 0; i < 8; i++) id += chars[Math.floor(Math.random() * chars.length)];
+      return id;
+    }
+
+    function openAddModal() {
+      document.getElementById('add-modal').style.display = 'flex';
+      document.getElementById('add-name').focus();
+    }
+
+    function closeAddModal() {
+      document.getElementById('add-modal').style.display = 'none';
+      ['add-name','add-phone','add-church','add-email'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('add-gender').value = '';
+      document.getElementById('add-modal-error').style.display = 'none';
+    }
+
+    async function submitManualAdd() {
+      const name   = document.getElementById('add-name').value.trim();
+      const gender = document.getElementById('add-gender').value;
+      const phone  = document.getElementById('add-phone').value.trim();
+      const church = document.getElementById('add-church').value.trim();
+      const email  = document.getElementById('add-email').value.trim() || 'N/A';
+      const errEl  = document.getElementById('add-modal-error');
+
+      if (!name || !gender || !phone || !church) {
+        errEl.textContent = 'Veuillez remplir tous les champs obligatoires.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      const ticketId  = generateTicketId();
+      const timestamp = new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Douala' });
+
+      try {
+        const params = new URLSearchParams({ action:'register', full_name:name, gender, phone, church, email, ticket_id:ticketId, timestamp });
+        const res    = await fetch(`${GOOGLE_SCRIPT_URL}?${params}`);
+        const result = await res.json();
+        if (result.status === 'success') {
+          closeAddModal();
+          await loadGuestList();
+        } else {
+          errEl.textContent = 'Erreur : ' + result.message;
+          errEl.style.display = 'block';
+        }
+      } catch (err) {
+        errEl.textContent = 'Erreur de connexion.';
+        errEl.style.display = 'block';
+      }
     }
   </script>
 
