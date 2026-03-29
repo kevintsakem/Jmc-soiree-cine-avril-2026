@@ -1065,25 +1065,23 @@
 
       try {
         // Send to Google Sheets via GET params (POST + no-cors drops the body)
-        if (GOOGLE_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbx63V0avh0SKojCffNkrkpV2eGznc_10SdYjNJG46ZHBPpRqKmFk4ICeXA9N-xWHQ_2/exec') {
-          try {
-            const params = new URLSearchParams({
-              action: 'register',
-              full_name: formData.full_name,
-              gender: formData.gender,
-              phone: formData.phone,
-              church: formData.church,
-              email: formData.email,
-              ticket_id: formData.ticket_id,
-              timestamp: formData.timestamp
-            });
-            const url = GOOGLE_SCRIPT_URL + '?' + params.toString();
-            const response = await fetch(url);
-            const result = await response.json();
-            console.log('Sheet response:', result);
-          } catch (err) {
-            console.warn('Google Sheets envoi échoué:', err);
-          }
+        try {
+          const params = new URLSearchParams({
+            action: 'register',
+            full_name: formData.full_name,
+            gender: formData.gender,
+            phone: formData.phone,
+            church: formData.church,
+            email: formData.email,
+            ticket_id: formData.ticket_id,
+            timestamp: formData.timestamp
+          });
+          const url = GOOGLE_SCRIPT_URL + '?' + params.toString();
+          const response = await fetch(url);
+          const result = await response.json();
+          console.log('Sheet response:', result);
+        } catch (err) {
+          console.warn('Google Sheets envoi échoué:', err);
         }
 
         // ✅ ALWAYS generate the QR code and ticket, regardless of sheet status
