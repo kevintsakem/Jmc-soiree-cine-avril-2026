@@ -1,43 +1,54 @@
 // =============================================
 // SERVEUR JMC SOIRÉE CINÉMA 2026
-// Node.js + Express + SQLite + Export Excel
+// Node.js + Express + PostgreSQL (Supabase) + Export Excel
 // =============================================
 //
-// DÉMARRAGE :
-//   npm install
-//   npm start
+// VARIABLES D'ENVIRONNEMENT REQUISES :
+//   DATABASE_URL  — Connection string Supabase
+//                   ex: postgresql://postgres:[password]@db.[ref].supabase.co:5432/postgres
 //
-// Accès local  : http://localhost:3000
-// Accès réseau : http://<IP-du-serveur>:3000
+// DÉMARRAGE LOCAL :
+//   Crée un fichier .env avec DATABASE_URL=...
+//   npm install && npm start
 //
-// DÉPLOIEMENT (Railway / Render / Fly.io) :
-//   - Pousse ce dossier sur GitHub
-//   - Connecte le repo sur railway.app ou render.com
-//   - Le serveur démarre automatiquement avec npm start
+// DÉPLOIEMENT :
+//   Render.com → connecte le repo GitHub, ajoute DATABASE_URL dans Environment
 // =============================================
 
-const express = require('express');
-const XLSX = require('xlsx');
-const path = require('path');
-const cors = require('cors');
-const fs = require('fs');
+const express  = require('express');
+const { Pool } = require('pg');
+const XLSX     = require('xlsx');
+const path     = require('path');
+const cors     = require('cors');
 
-const app = express();
+const app  = express();
 const PORT = process.env.PORT || 3000;
 
 // =============================================
-// BASE DE DONNÉES — fichier JSON
+// CONNEXION POSTGRESQL (Supabase)
 // =============================================
-const DB_FILE = path.join(__dirname, 'inscriptions.json');
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }  // requis pour Supabase / Render
+});
 
-function loadDB() {
-  if (!fs.existsSync(DB_FILE)) return [];
-  try { return JSON.parse(fs.readFileSync(DB_FILE, 'utf8')); }
-  catch { return []; }
-}
-
-function saveDB(records) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(records, null, 2), 'utf8');
+// Crée la table si elle n'existe pas encore
+async function initDB() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS inscriptions (
+      id          SERIAL PRIMARY KEY,
+      timestamp   TEXT,
+      full_name   TEXT NOT NULL,
+      gender      TEXT,
+      phone       TEXT,
+      church      TEXT,
+      email       TEXT DEFAULT 'N/A',
+      ticket_id   TEXT UNIQUE NOT NULL,
+      scan_status TEXT DEFAULT 'Non scanné',
+      scan_time   TEXT DEFAULT ''
+    )
+  `);
+  console.log('✅ Base de données prête');
 }
 
 // =============================================
@@ -51,18 +62,18 @@ app.use(express.static(path.join(__dirname)));
 // API — compatible avec l'ancien Google Apps Script
 // Tous les appels passent par GET /api?action=...
 // =============================================
-app.get('/api', (req, res) => {
+app.get('/api', async (req, res) => {
   const action = (req.query.action || '').toLowerCase();
 
   try {
     if (action === 'register') {
-      return handleRegister(req.query, res);
+      return await handleRegister(req.query, res);
     } else if (action === 'scan') {
-      return handleScan(req.query.ticket_id, res);
+      return await handleScan(req.query.ticket_id, res);
     } else if (action === 'list') {
-      return handleList(res);
+      return await handleList(res);
     } else if (action === 'export') {
-      return handleExport(res);
+      return await handleExport(res);
     } else {
       return res.json({ status: 'ok', message: 'JMC Soirée Cinéma API v3. Actions: register, scan, list, export' });
     }
@@ -75,44 +86,43 @@ app.get('/api', (req, res) => {
 // =============================================
 // REGISTER — Nouvelle inscription
 // =============================================
-function handleRegister(params, res) {
-  const records = loadDB();
+async function handleRegister(params, res) {
+  const timestamp = params.timestamp ||
+    new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Douala' });
 
-  if (records.find(r => r.ticket_id === params.ticket_id)) {
-    return res.json({ status: 'error', message: 'Ce ticket ID existe déjà.' });
+  try {
+    await pool.query(
+      `INSERT INTO inscriptions (timestamp, full_name, gender, phone, church, email, ticket_id, scan_status, scan_time)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,'Non scanné','')`,
+      [timestamp, params.full_name || '', params.gender || '', params.phone || '',
+       params.church || '', params.email || 'N/A', params.ticket_id || '']
+    );
+    return res.json({ status: 'success', message: 'Inscription enregistrée', ticket_id: params.ticket_id });
+  } catch (err) {
+    if (err.code === '23505') { // unique_violation
+      return res.json({ status: 'error', message: 'Ce ticket ID existe déjà.' });
+    }
+    throw err;
   }
-
-  records.push({
-    timestamp:   params.timestamp || new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Douala' }),
-    full_name:   params.full_name || '',
-    gender:      params.gender || '',
-    phone:       params.phone || '',
-    church:      params.church || '',
-    email:       params.email || 'N/A',
-    ticket_id:   params.ticket_id || '',
-    scan_status: 'Non scanné',
-    scan_time:   ''
-  });
-
-  saveDB(records);
-  return res.json({ status: 'success', message: 'Inscription enregistrée', ticket_id: params.ticket_id });
 }
 
 // =============================================
 // SCAN — Vérifier et valider un ticket
 // =============================================
-function handleScan(ticketId, res) {
+async function handleScan(ticketId, res) {
   if (!ticketId) {
     return res.json({ status: 'error', message: 'ticket_id manquant' });
   }
 
-  const records = loadDB();
-  const row = records.find(r => r.ticket_id === ticketId);
+  const { rows } = await pool.query(
+    'SELECT * FROM inscriptions WHERE ticket_id = $1', [ticketId]
+  );
 
-  if (!row) {
+  if (rows.length === 0) {
     return res.json({ status: 'not_found', message: 'Aucun inscrit trouvé avec ce ticket ID.' });
   }
 
+  const row = rows[0];
   const guestData = {
     full_name:   row.full_name,
     gender:      row.gender,
@@ -129,9 +139,10 @@ function handleScan(ticketId, res) {
   }
 
   const scanTime = new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Douala' });
-  row.scan_status = 'Scanné';
-  row.scan_time   = scanTime;
-  saveDB(records);
+  await pool.query(
+    'UPDATE inscriptions SET scan_status=$1, scan_time=$2 WHERE ticket_id=$3',
+    ['Scanné', scanTime, ticketId]
+  );
 
   guestData.scan_status = 'Scanné';
   guestData.scanned_at  = scanTime;
@@ -142,9 +153,9 @@ function handleScan(ticketId, res) {
 // =============================================
 // LIST — Retourner tous les inscrits
 // =============================================
-function handleList(res) {
-  const records = loadDB();
-  const guests = records.map(row => ({
+async function handleList(res) {
+  const { rows } = await pool.query('SELECT * FROM inscriptions ORDER BY id ASC');
+  const guests = rows.map(row => ({
     timestamp:   row.timestamp,
     full_name:   row.full_name,
     gender:      row.gender,
@@ -161,37 +172,28 @@ function handleList(res) {
 // =============================================
 // EXPORT — Télécharger le fichier Excel
 // =============================================
-function handleExport(res) {
-  const rows = loadDB();
+async function handleExport(res) {
+  const { rows } = await pool.query('SELECT * FROM inscriptions ORDER BY id ASC');
 
   const wsData = [
     ['Timestamp', 'Nom Complet', 'Sexe', 'Téléphone', 'Église', 'Email', 'Ticket ID', 'Statut Scan', 'Heure Scan'],
     ...rows.map(row => [
-      row.timestamp,
-      row.full_name,
-      row.gender,
-      row.phone,
-      row.church,
-      row.email,
-      row.ticket_id,
-      row.scan_status,
-      row.scan_time
+      row.timestamp, row.full_name, row.gender, row.phone,
+      row.church, row.email, row.ticket_id, row.scan_status, row.scan_time
     ])
   ];
 
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet(wsData);
-
-  // Largeur des colonnes
   ws['!cols'] = [
     { wch: 20 }, { wch: 28 }, { wch: 10 }, { wch: 16 },
     { wch: 22 }, { wch: 26 }, { wch: 20 }, { wch: 14 }, { wch: 20 }
   ];
-
   XLSX.utils.book_append_sheet(wb, ws, 'Inscriptions');
-  const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
 
+  const buffer   = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
   const filename = `inscriptions-JMC-${new Date().toISOString().split('T')[0]}.xlsx`;
+
   res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   res.send(buffer);
@@ -200,10 +202,12 @@ function handleExport(res) {
 // =============================================
 // DÉMARRAGE
 // =============================================
-app.listen(PORT, () => {
-  console.log('');
-  console.log('✅ Serveur JMC Soirée Cinéma démarré');
-  console.log(`   Local   : http://localhost:${PORT}`);
-  console.log(`   Réseau  : http://<votre-IP>:${PORT}`);
-  console.log('');
+initDB().then(() => {
+  app.listen(PORT, () => {
+    console.log('✅ Serveur JMC Soirée Cinéma démarré');
+    console.log(`   Local   : http://localhost:${PORT}`);
+  });
+}).catch(err => {
+  console.error('❌ Erreur connexion base de données:', err.message);
+  process.exit(1);
 });
