@@ -668,6 +668,7 @@
               <th>Sexe</th>
               <th>Téléphone</th>
               <th>Église</th>
+              <th>Email</th>
               <th>Ticket ID</th>
               <th>Statut</th>
               <th>Actions</th>
@@ -952,6 +953,7 @@
           <td>${g.gender || '—'}</td>
           <td>${g.phone || '—'}</td>
           <td>${g.church || '—'}</td>
+          <td style="font-size:0.85rem;">${g.email && g.email !== 'N/A' ? g.email : '—'}</td>
           <td style="font-family:monospace;font-size:0.8rem;">${g.ticket_id || '—'}</td>
           <td>
             <span class="status-badge ${g.scan_status === 'Scanné' ? 'scanned' : 'pending'}">
