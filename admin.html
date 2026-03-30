@@ -816,14 +816,26 @@
     async function startScanner() {
       showState('scanning');
       try {
-        scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        scanStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' } }
+        });
         const video = document.getElementById('scan-video');
         video.srcObject = scanStream;
-        video.play();
-        video.onloadedmetadata = () => { scanFrames(); };
+        video.setAttribute('playsinline', '');
+        video.play().catch(() => {});
+        // Attendre que la vidéo soit prête avant de scanner
+        waitAndScan(video);
       } catch (err) {
-        alert('Impossible d\'accéder à la caméra : ' + err.message);
+        alert('Caméra inaccessible : ' + (err.message || err));
         showState('ready');
+      }
+    }
+
+    function waitAndScan(video) {
+      if (video.readyState >= 2 && video.videoWidth > 0) {
+        scanLoop = requestAnimationFrame(scanFrames);
+      } else {
+        setTimeout(() => waitAndScan(video), 200);
       }
     }
 
@@ -834,24 +846,23 @@
     }
 
     function scanFrames() {
+      if (!scanStream) return;
       const video  = document.getElementById('scan-video');
       const canvas = document.getElementById('scan-canvas');
-      if (!scanStream) return;
 
-      if (video.readyState === video.HAVE_ENOUGH_DATA) {
-        canvas.width  = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
-        if (code && code.data && code.data !== lastScanned) {
-          lastScanned = code.data;
-          setTimeout(() => { lastScanned = null; }, 5000);
-          stopScanner();
-          handleQRCode(code.data);
-          return;
-        }
+      canvas.width  = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'dontInvert' });
+
+      if (code && code.data && code.data !== lastScanned) {
+        lastScanned = code.data;
+        setTimeout(() => { lastScanned = null; }, 5000);
+        stopScanner();
+        handleQRCode(code.data);
+        return;
       }
       scanLoop = requestAnimationFrame(scanFrames);
     }
