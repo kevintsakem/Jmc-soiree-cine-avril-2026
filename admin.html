@@ -941,8 +941,18 @@
           </div>`;
 
         const overlay = document.getElementById('scan-overlay');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.right = '0';
+        overlay.style.bottom = '0';
+        overlay.style.zIndex = '9999';
+        overlay.style.background = 'rgba(0,0,0,0.9)';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.padding = '1rem';
         document.getElementById('scan-result').innerHTML = html;
-        overlay.style.cssText = 'display:flex !important; position:fixed; top:0; left:0; right:0; bottom:0; z-index:9999; background:rgba(0,0,0,0.9); align-items:center; justify-content:center; padding:1rem;';
+        overlay.style.display = 'flex';
 
         if (type === 'success' || type === 'warning') {
           setTimeout(() => closeScanOverlay(), 6000);
