@@ -1050,7 +1050,7 @@
       formStatus.innerHTML = '';
 
       const ticketId = generateTicketId();
-      const timestamp = new Date().toLocaleString('fr-CM');
+      const timestamp = new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Douala' });
 
       // Data to send
       const formData = {
