@@ -641,10 +641,9 @@
 
         <!-- ÉTAT 2 : Scanning -->
         <div id="state-scanning" style="display:none;">
-          <video id="scan-video" autoplay playsinline muted style="width:100%;border-radius:12px;max-height:300px;object-fit:cover;"></video>
-          <canvas id="scan-canvas" style="display:none;"></canvas>
+          <div id="qr-reader" style="width:100%;border-radius:12px;overflow:hidden;"></div>
           <p style="color:var(--gold);text-align:center;margin:0.75rem 0;">🔍 Pointez vers un QR code...</p>
-          <button class="btn-danger" style="width:100%;" onclick="stopScanner()">Arrêter</button>
+          <button class="btn-danger" style="width:100%;margin-top:0.5rem;" onclick="stopScanner()">Arrêter</button>
         </div>
 
         <!-- ÉTAT 3 : Résultat -->
@@ -736,7 +735,7 @@
   </div>
 
   <!-- QR Scanner Library -->
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
   <script>
     // =============================================
@@ -801,12 +800,10 @@
     }
 
     // =============================================
-    // QR SCANNER — jsQR + getUserMedia
+    // QR SCANNER — Html5Qrcode
     // =============================================
-    let scanStream  = null;
-    let scanTimer   = null;
-    let lastScanned = null;
-    let isProcessing = false;
+    let html5QrCode  = null;
+    let isScanning   = true;
 
     function showState(name) {
       document.getElementById('state-ready').style.display    = name === 'ready'    ? 'block' : 'none';
@@ -816,54 +813,30 @@
 
     async function startScanner() {
       showState('scanning');
-      try {
-        scanStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }
+      isScanning = true;
+      html5QrCode = new Html5Qrcode('qr-reader');
+      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+      html5QrCode.start({ facingMode: 'environment' }, config, onScanSuccess)
+        .catch(err => {
+          alert('Caméra inaccessible : ' + err);
+          showState('ready');
         });
-        const video = document.getElementById('scan-video');
-        video.setAttribute('playsinline', '');
-        video.setAttribute('autoplay', '');
-        video.srcObject = scanStream;
-        try { await video.play(); } catch(e) {}
-        // Démarrer la boucle de scan toutes les 250ms
-        scanTimer = setInterval(scanFrame, 250);
-      } catch (err) {
-        alert('Caméra inaccessible : ' + (err.message || err));
-        showState('ready');
-      }
     }
 
     function stopScanner() {
-      if (scanTimer)  { clearInterval(scanTimer); scanTimer = null; }
-      if (scanStream) { scanStream.getTracks().forEach(t => t.stop()); scanStream = null; }
-      isProcessing = false;
+      if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.stop().catch(() => {});
+      }
       showState('ready');
     }
 
-    function scanFrame() {
-      if (!scanStream || isProcessing) return;
-      const video = document.getElementById('scan-video');
-      if (!video || video.readyState < 2 || video.videoWidth === 0) return;
-
-      const canvas = document.getElementById('scan-canvas');
-      const w = Math.min(video.videoWidth, 640);
-      const h = Math.round(video.videoHeight * (w / video.videoWidth));
-      canvas.width  = w;
-      canvas.height = h;
-
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, w, h);
-      const img  = ctx.getImageData(0, 0, w, h);
-      const code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'attemptBoth' });
-
-      if (code && code.data && code.data !== lastScanned) {
-        lastScanned  = code.data;
-        isProcessing = true;
-        clearInterval(scanTimer); scanTimer = null;
-        if (scanStream) { scanStream.getTracks().forEach(t => t.stop()); scanStream = null; }
-        setTimeout(() => { lastScanned = null; }, 8000);
-        handleQRCode(code.data);
+    function onScanSuccess(decodedText) {
+      if (!isScanning) return;
+      isScanning = false;
+      if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.stop().catch(() => {});
       }
+      handleQRCode(decodedText);
     }
 
     function handleQRCode(raw) {
@@ -926,7 +899,7 @@
           <div style="font-size:4rem;">${c.icon}</div>
           <h2 style="color:${c.border};margin:0.5rem 0;font-family:var(--font-display);">${c.title}</h2>
           ${details}
-          <button onclick="isProcessing=false;showState('ready')" style="margin-top:1.5rem;padding:0.8rem;width:100%;background:${c.border};border:none;border-radius:8px;color:#000;font-weight:700;font-size:1rem;cursor:pointer;">
+          <button onclick="isScanning=true;showState('ready')" style="margin-top:1.5rem;padding:0.8rem;width:100%;background:${c.border};border:none;border-radius:8px;color:#000;font-weight:700;font-size:1rem;cursor:pointer;">
             Scanner suivant
           </button>
         </div>`;
