@@ -684,6 +684,11 @@
         <button class="btn-outline" onclick="loadGuestList()"><span id="refresh-icon">↻</span> Rafraîchir</button>
         <button class="btn-gold" onclick="openAddModal()">+ Ajouter manuellement</button>
         <a class="btn-outline" href="/api?action=export" download style="text-decoration:none;">⬇ Exporter Excel</a>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <input type="number" id="gen-count" min="1" max="100" value="10"
+            style="width:70px;padding:0.6rem 0.7rem;background:rgba(255,255,255,0.05);border:1px solid var(--white-20);border-radius:2px;color:var(--white-90);font-size:0.9rem;text-align:center;">
+          <button class="btn-outline" id="gen-btn" onclick="generateRandomUsers()">⚡ Générer</button>
+        </div>
       </div>
 
       <div id="guest-list-loading">
@@ -987,6 +992,72 @@
         (g.church || '').toLowerCase().includes(query)
       );
       renderGuestList(filtered);
+    }
+
+    // =============================================
+    // GÉNÉRER DES UTILISATEURS ALÉATOIRES (TEST)
+    // =============================================
+    async function generateRandomUsers() {
+      const count = parseInt(document.getElementById('gen-count').value) || 10;
+      if (count < 1 || count > 100) { alert('Entrez un nombre entre 1 et 100.'); return; }
+
+      const btn = document.getElementById('gen-btn');
+      btn.disabled = true;
+      btn.textContent = `⏳ 0 / ${count}`;
+
+      const firstNames = [
+        'Aurelie','Kevin','Marie','Jean','Christiane','Fandom','Divine','Grace',
+        'Patrick','Sandra','Lionel','Carine','Rodrigue','Vanessa','Michel','Laure',
+        'Boris','Flore','Armand','Nadège','Serge','Joëlle','Brice','Estelle',
+        'Hervé','Nathalie','Franck','Ornella','Alain','Béatrice','Wilfried','Solange'
+      ];
+      const lastNames = [
+        'Mbarga','Tsakem','Kamga','Fouda','Nguema','Biya','Mvondo','Essomba',
+        'Nkoa','Atangana','Ondoa','Beyala','Mbassi','Ndjomo','Tchuente','Lobe',
+        'Kouam','Mfou','Abanda','Ngono','Belinga','Manga','Ewane','Owona'
+      ];
+      const churches = [
+        'MEEC Centre','MEEC Bastos','MEEC Melen','MEEC Omnisport',
+        'EC Mvolyé','EC Nkol-Eton','EC Biyem-Assi','EPCSA Yaoundé',
+        'Église de Grâce','Mission Évangélique'
+      ];
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+      let ok = 0, fail = 0;
+      for (let i = 0; i < count; i++) {
+        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+        const lastName  = lastNames[Math.floor(Math.random() * lastNames.length)];
+        const gender    = Math.random() > 0.5 ? 'Homme' : 'Femme';
+        const phone     = '6' + String(Math.floor(10000000 + Math.random() * 89999999));
+        const church    = churches[Math.floor(Math.random() * churches.length)];
+
+        let ticketId = 'JMC-CIN-';
+        for (let j = 0; j < 6; j++) ticketId += chars[Math.floor(Math.random() * chars.length)];
+
+        const timestamp = new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Douala' });
+        const params = new URLSearchParams({
+          action: 'register',
+          full_name: `${firstName} ${lastName}`,
+          gender, phone, church,
+          email: 'N/A',
+          ticket_id: ticketId,
+          timestamp
+        });
+
+        try {
+          const res    = await fetch(`${GOOGLE_SCRIPT_URL}?${params}`);
+          const result = await res.json();
+          if (result.status === 'success') ok++;
+          else fail++;
+        } catch (_) { fail++; }
+
+        btn.textContent = `⏳ ${ok + fail} / ${count}`;
+      }
+
+      btn.disabled    = false;
+      btn.textContent = '⚡ Générer';
+      alert(`✅ ${ok} inscrits générés${fail ? ` — ${fail} échec(s)` : ''}.`);
+      loadGuestList();
     }
 
     // =============================================
