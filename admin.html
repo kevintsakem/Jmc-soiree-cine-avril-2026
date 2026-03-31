@@ -850,12 +850,14 @@
       const video  = document.getElementById('scan-video');
       const canvas = document.getElementById('scan-canvas');
 
-      canvas.width  = video.videoWidth;
-      canvas.height = video.videoHeight;
+      // Réduire la résolution pour accélérer jsQR sur mobile
+      const scale = Math.min(1, 640 / video.videoWidth);
+      canvas.width  = Math.round(video.videoWidth  * scale);
+      canvas.height = Math.round(video.videoHeight * scale);
       const ctx = canvas.getContext('2d');
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'dontInvert' });
+      const code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'attemptBoth' });
 
       if (code && code.data && code.data !== lastScanned) {
         lastScanned = code.data;
