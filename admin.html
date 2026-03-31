@@ -4,46 +4,43 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin — JMC Soirée Cinéma 2026</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload"
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Cormorant+Garamond:wght@300;400;600&family=Outfit:wght@300;400;500;600&display=swap"
-    as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Cormorant+Garamond:wght@300;400;600&family=Outfit:wght@300;400;500;600&display=swap">
-  </noscript>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Cormorant+Garamond:wght@300;400;600&family=Outfit:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Cormorant+Garamond:wght@300;400;600&family=Outfit:wght@300;400;500;600&display=swap"></noscript>
 
   <style>
     :root {
-      --navy-deep:  #0a1628;
-      --navy:       #0f1f3d;
-      --navy-mid:   #162a50;
+      --navy-deep: #0a1628;
+      --navy: #0f1f3d;
+      --navy-mid: #162a50;
       --navy-light: #1d3461;
-      --gold:        #c9a84c;
-      --gold-light:  #e0c878;
-      --gold-dim:    #8a7235;
-      --cream:       #f5efe0;
-      --white:       #ffffff;
-      --white-10:    rgba(255,255,255,0.1);
-      --white-20:    rgba(255,255,255,0.2);
-      --white-50:    rgba(255,255,255,0.5);
-      --white-70:    rgba(255,255,255,0.7);
-      --white-90:    rgba(255,255,255,0.9);
-      --gold-glow:   rgba(201,168,76,0.3);
-      --green:       #4cc978;
-      --green-dim:   rgba(76,201,120,0.15);
-      --red:         #c94c4c;
-      --red-dim:     rgba(201,76,76,0.15);
-      --orange:      #c9964c;
-      --orange-dim:  rgba(201,150,76,0.15);
+      --gold: #c9a84c;
+      --gold-light: #e0c878;
+      --gold-bright: #f0d98c;
+      --gold-dim: #8a7235;
+      --cream: #f5efe0;
+      --white: #ffffff;
+      --white-10: rgba(255,255,255,0.1);
+      --white-20: rgba(255,255,255,0.2);
+      --white-50: rgba(255,255,255,0.5);
+      --white-70: rgba(255,255,255,0.7);
+      --white-90: rgba(255,255,255,0.9);
+      --gold-glow: rgba(201,168,76,0.3);
+      --green: #4cc978;
+      --green-dim: rgba(76,201,120,0.15);
+      --red: #c94c4c;
+      --red-dim: rgba(201,76,76,0.15);
+      --orange: #c9964c;
+      --orange-dim: rgba(201,150,76,0.15);
       --font-display: 'Playfair Display', Georgia, serif;
-      --font-body:    'Outfit', 'Segoe UI', sans-serif;
-      --font-accent:  'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Outfit', 'Segoe UI', sans-serif;
+      --font-accent: 'Cormorant Garamond', Georgia, serif;
     }
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { font-size: 16px; }
+
     body {
       font-family: var(--font-body);
       background: var(--navy-deep);
@@ -53,142 +50,529 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* LOGIN */
-    .login-screen { min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 2rem; }
-    .login-card {
-      width: 100%; max-width: 400px;
-      background: rgba(22,42,80,0.4); border: 1px solid var(--white-10);
-      padding: 3rem 2.5rem; position: relative;
+    /* ============================================
+       LOGIN SCREEN
+       ============================================ */
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
     }
+
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+      background: rgba(22,42,80,0.4);
+      border: 1px solid var(--white-10);
+      padding: 3rem 2.5rem;
+      position: relative;
+    }
+
     .login-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
       background: linear-gradient(90deg, transparent, var(--gold), transparent);
     }
-    .login-logo { text-align: center; margin-bottom: 2rem; }
-    .login-logo h1 { font-family: var(--font-display); font-size: 1.8rem; color: var(--gold); letter-spacing: 3px; }
-    .login-logo p { font-family: var(--font-accent); font-size: 0.85rem; color: var(--white-50); letter-spacing: 3px; text-transform: uppercase; margin-top: 0.3rem; }
-    .form-group { margin-bottom: 1.5rem; }
-    .form-group label { display: block; font-family: var(--font-accent); font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 0.5rem; }
-    .form-group input, .form-group select {
-      width: 100%; padding: 0.8rem 1rem;
-      background: rgba(255,255,255,0.05); border: 1px solid var(--white-20);
-      border-radius: 2px; color: var(--white-90); font-family: var(--font-body);
-      font-size: 0.95rem; transition: border-color 0.3s, background 0.3s; outline: none;
-    }
-    .form-group input:focus, .form-group select:focus { border-color: var(--gold); background: rgba(201,168,76,0.05); }
-    .form-group select option { background: var(--navy); color: var(--white-90); }
-    #login-error { color: var(--red); text-align: center; margin-top: 1rem; font-size: 0.9rem; }
 
-    /* BUTTONS */
+    .login-logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-logo h1 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      color: var(--gold);
+      letter-spacing: 3px;
+    }
+
+    .login-logo p {
+      font-family: var(--font-accent);
+      font-size: 0.85rem;
+      color: var(--white-50);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-family: var(--font-accent);
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--white-20);
+      border-radius: 2px;
+      color: var(--white-90);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      transition: border-color 0.3s, background 0.3s;
+      outline: none;
+    }
+
+    .form-group input:focus {
+      border-color: var(--gold);
+      background: rgba(201,168,76,0.05);
+    }
+
     .btn-gold {
-      display: inline-block; padding: 0.9rem 2.5rem;
+      display: inline-block;
+      padding: 0.9rem 2.5rem;
       background: linear-gradient(135deg, var(--gold), var(--gold-light));
-      color: var(--navy-deep); font-family: var(--font-body); font-size: 0.85rem;
-      font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
-      text-decoration: none; border: none; border-radius: 2px; cursor: pointer;
-      transition: all 0.3s ease; width: 100%; text-align: center;
+      color: var(--navy-deep);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      text-align: center;
     }
-    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 6px 25px var(--gold-glow); }
+
+    .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px var(--gold-glow);
+    }
+
     .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
     .btn-outline {
-      display: inline-block; padding: 0.7rem 1.5rem; background: transparent;
-      color: var(--gold); font-family: var(--font-body); font-size: 0.8rem;
-      font-weight: 500; letter-spacing: 1px; text-transform: uppercase;
-      border: 1px solid var(--gold-dim); border-radius: 2px; cursor: pointer; transition: all 0.3s;
+      display: inline-block;
+      padding: 0.7rem 1.5rem;
+      background: transparent;
+      color: var(--gold);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border: 1px solid var(--gold-dim);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.3s;
     }
+
     .btn-outline:hover { background: var(--gold); color: var(--navy-deep); }
+
     .btn-danger {
-      background: transparent; color: var(--red); border: 1px solid var(--red);
-      padding: 0.7rem 1.5rem; font-family: var(--font-body); font-size: 0.8rem;
-      font-weight: 500; letter-spacing: 1px; text-transform: uppercase;
-      border-radius: 2px; cursor: pointer; transition: all 0.3s;
+      background: transparent;
+      color: var(--red);
+      border: 1px solid var(--red);
+      padding: 0.7rem 1.5rem;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.3s;
     }
+
     .btn-danger:hover { background: var(--red); color: var(--white); }
 
-    /* DASHBOARD */
-    .admin-dashboard { display: none; min-height: 100vh; }
+    #login-error {
+      color: var(--red);
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    /* ============================================
+       ADMIN DASHBOARD
+       ============================================ */
+    .admin-dashboard {
+      display: none;
+      min-height: 100vh;
+    }
+
     .admin-header {
-      padding: 1rem 2rem; background: rgba(10,22,40,0.95); border-bottom: 1px solid var(--white-10);
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+      padding: 1rem 2rem;
+      background: rgba(10,22,40,0.95);
+      border-bottom: 1px solid var(--white-10);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
-    .admin-header h1 { font-family: var(--font-display); font-size: 1.3rem; color: var(--gold); letter-spacing: 2px; }
+
+    .admin-header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .admin-header h1 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: var(--gold);
+      letter-spacing: 2px;
+    }
+
     .admin-header .badge {
-      font-size: 0.7rem; padding: 0.2rem 0.6rem; background: var(--green-dim);
-      color: var(--green); border-radius: 2px; letter-spacing: 1px; text-transform: uppercase;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      background: var(--green-dim);
+      color: var(--green);
+      border-radius: 2px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
-    .admin-header-left { display: flex; align-items: center; gap: 1rem; }
 
     /* TABS */
-    .admin-tabs { display: flex; border-bottom: 1px solid var(--white-10); padding: 0 2rem; background: rgba(15,31,61,0.5); }
-    .tab-btn {
-      padding: 1rem 1.5rem; background: none; border: none;
-      color: var(--white-50); font-family: var(--font-body); font-size: 0.85rem;
-      font-weight: 500; letter-spacing: 1px; text-transform: uppercase;
-      cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.3s;
+    .admin-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--white-10);
+      padding: 0 2rem;
+      background: rgba(15,31,61,0.5);
     }
+
+    .tab-btn {
+      padding: 1rem 1.5rem;
+      background: none;
+      border: none;
+      color: var(--white-50);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
     .tab-btn:hover { color: var(--white-70); }
-    .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
-    .tab-content { display: none; padding: 2rem; }
+    .tab-btn.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+
+    .tab-content {
+      display: none;
+      padding: 2rem;
+    }
+
     .tab-content.active { display: block; }
 
-    /* SCANNER */
-    .scanner-area { max-width: 600px; margin: 0 auto; text-align: center; }
+    /* ============================================
+       SCANNER TAB
+       ============================================ */
+    .scanner-area {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
 
-    /* STATS */
-    .stats-bar { display: flex; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .scanner-controls {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    #scanner-view {
+      width: 100%;
+      max-width: 450px;
+      margin: 0 auto 1.5rem;
+      border-radius: 2px;
+      overflow: hidden;
+      border: 1px solid var(--white-10);
+    }
+
+    #scanner-view video {
+      width: 100%;
+      display: block;
+    }
+
+    #scanner-status {
+      font-size: 0.9rem;
+      color: var(--white-50);
+      margin-top: 1rem;
+    }
+
+    /* Scan result overlay */
+    /* Overlay plein écran pour résultat scan */
+    #scan-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 3000;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .scan-result {
+      padding: 2rem;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      animation: fadeIn 0.3s ease;
+      position: relative;
+    }
+
+    .scan-result.success {
+      background: #0d2b1a;
+      border: 2px solid rgba(76,201,120,0.6);
+    }
+
+    .scan-result.error {
+      background: #2b0d0d;
+      border: 2px solid rgba(201,76,76,0.6);
+    }
+
+    .scan-result.warning {
+      background: #2b1e0d;
+      border: 2px solid rgba(201,150,76,0.6);
+    }
+
+    .scan-result-icon {
+      font-size: 4rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .scan-result h3 {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .scan-result.success h3 { color: #4cc978; }
+    .scan-result.error h3 { color: var(--red); }
+    .scan-result.warning h3 { color: #e0a050; }
+
+    .scan-result p {
+      color: var(--white-70);
+      font-size: 0.95rem;
+    }
+
+    .scan-close-btn {
+      margin-top: 1.5rem;
+      padding: 0.6rem 2rem;
+      background: var(--white-10);
+      border: 1px solid var(--white-20);
+      color: var(--white-90);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .scan-result .detail-line {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid var(--white-10);
+      text-align: left;
+    }
+
+    .scan-result .detail-label {
+      color: var(--white-50);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .scan-result .detail-value {
+      color: var(--cream);
+      font-weight: 500;
+    }
+
+    /* ============================================
+       GUEST LIST TAB
+       ============================================ */
+    .stats-bar {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
     .stat-card {
-      flex: 1; min-width: 140px; background: rgba(22,42,80,0.4);
-      border: 1px solid var(--white-10); padding: 1.2rem; border-radius: 2px; text-align: center;
+      flex: 1;
+      min-width: 140px;
+      background: rgba(22,42,80,0.4);
+      border: 1px solid var(--white-10);
+      padding: 1.2rem;
+      border-radius: 2px;
+      text-align: center;
     }
-    .stat-number { font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--gold-light); }
-    .stat-label { font-size: 0.75rem; color: var(--white-50); letter-spacing: 2px; text-transform: uppercase; margin-top: 0.2rem; }
-    .stat-card.scanned .stat-number { color: var(--green); }
-    .stat-card.pending  .stat-number { color: var(--orange); }
 
-    /* SEARCH */
-    .search-bar { margin-bottom: 1.5rem; }
-    .search-bar input {
-      width: 100%; max-width: 400px; padding: 0.8rem 1rem;
-      background: rgba(255,255,255,0.05); border: 1px solid var(--white-20);
-      border-radius: 2px; color: var(--white-90); font-family: var(--font-body);
-      font-size: 0.9rem; outline: none; transition: border-color 0.3s;
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gold-light);
     }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--white-50);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 0.2rem;
+    }
+
+    .stat-card.scanned .stat-number { color: var(--green); }
+    .stat-card.pending .stat-number { color: var(--orange); }
+
+    /* Search */
+    .search-bar {
+      margin-bottom: 1.5rem;
+    }
+
+    .search-bar input {
+      width: 100%;
+      max-width: 400px;
+      padding: 0.8rem 1rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--white-20);
+      border-radius: 2px;
+      color: var(--white-90);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
     .search-bar input:focus { border-color: var(--gold); }
 
-    /* TABLE */
-    .guest-table-wrap { overflow-x: auto; }
-    .guest-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    .guest-table th {
-      text-align: left; padding: 0.8rem 1rem; font-family: var(--font-accent);
-      font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase;
-      color: var(--gold-dim); border-bottom: 1px solid var(--white-20); white-space: nowrap;
+    /* Table */
+    .guest-table-wrap {
+      overflow-x: auto;
     }
-    .guest-table td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--white-10); color: var(--white-70); white-space: nowrap; }
-    .guest-table tr:hover td { background: rgba(201,168,76,0.03); }
-    #guest-list-loading { text-align: center; padding: 3rem; color: var(--white-50); }
 
-    /* MANUAL SCAN */
-    .manual-scan { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--white-10); }
-    .manual-scan-row { display: flex; gap: 0.8rem; max-width: 450px; margin: 0.8rem auto 0; }
-    .manual-scan-row input {
-      flex: 1; padding: 0.7rem 1rem; background: rgba(255,255,255,0.05);
-      border: 1px solid var(--white-20); border-radius: 2px;
-      color: var(--white-90); font-family: monospace; font-size: 0.9rem; outline: none;
+    .guest-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
     }
+
+    .guest-table th {
+      text-align: left;
+      padding: 0.8rem 1rem;
+      font-family: var(--font-accent);
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      border-bottom: 1px solid var(--white-20);
+      white-space: nowrap;
+    }
+
+    .guest-table td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--white-10);
+      color: var(--white-70);
+      white-space: nowrap;
+    }
+
+    .guest-table tr:hover td {
+      background: rgba(201,168,76,0.03);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.2rem 0.7rem;
+      border-radius: 2px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .status-badge.scanned {
+      background: var(--green-dim);
+      color: var(--green);
+    }
+
+    .status-badge.pending {
+      background: var(--orange-dim);
+      color: var(--orange);
+    }
+
+    #guest-list-loading {
+      text-align: center;
+      padding: 3rem;
+      color: var(--white-50);
+    }
+
+    /* ============================================
+       MANUAL SCAN INPUT
+       ============================================ */
+    .manual-scan {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--white-10);
+    }
+
+    .manual-scan-row {
+      display: flex;
+      gap: 0.8rem;
+      max-width: 450px;
+      margin: 0.8rem auto 0;
+    }
+
+    .manual-scan-row input {
+      flex: 1;
+      padding: 0.7rem 1rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--white-20);
+      border-radius: 2px;
+      color: var(--white-90);
+      font-family: monospace;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
     .manual-scan-row input:focus { border-color: var(--gold); }
 
-    /* SPINNER */
+    /* ============================================
+       SPINNER
+       ============================================ */
     .spinner {
-      display: inline-block; width: 18px; height: 18px;
-      border: 2px solid var(--gold-dim); border-top-color: var(--gold);
-      border-radius: 50%; animation: spin 0.8s linear infinite;
-      vertical-align: middle; margin-right: 0.5rem;
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--gold-dim);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+      margin-right: 0.5rem;
     }
 
-    @keyframes spin   { to { transform: rotate(360deg); } }
-    @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* RESPONSIVE */
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
     @media (max-width: 768px) {
       .admin-tabs { padding: 0 1rem; }
       .tab-btn { padding: 0.8rem 1rem; font-size: 0.75rem; }
@@ -203,7 +587,7 @@
 </head>
 <body>
 
-  <!-- LOGIN -->
+  <!-- ========== LOGIN SCREEN ========== -->
   <div class="login-screen" id="login-screen">
     <div class="login-card">
       <div class="login-logo">
@@ -212,24 +596,25 @@
       </div>
       <div class="form-group">
         <label for="username">Nom d'utilisateur</label>
-        <input type="text" id="username" placeholder="admin" autocomplete="username">
+        <input type="text" id="username" placeholder="admin">
       </div>
       <div class="form-group">
         <label for="password">Mot de passe</label>
-        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+        <input type="password" id="password" placeholder="••••••••">
       </div>
-      <button class="btn-gold" onclick="doLogin()">Se connecter</button>
+      <button class="btn-gold" id="loginBtn" onclick="doLogin()">Connexion</button>
       <p id="login-error"></p>
     </div>
   </div>
 
-  <!-- DASHBOARD -->
+  <!-- ========== ADMIN DASHBOARD ========== -->
   <div class="admin-dashboard" id="admin-dashboard">
-
+    
+    <!-- Header -->
     <div class="admin-header">
       <div class="admin-header-left">
         <h1>JMC Admin</h1>
-        <span class="badge">En ligne</span>
+        <span class="badge">Soirée Cinéma 2026</span>
       </div>
       <div>
         <a href="index.html" class="btn-outline" style="margin-right:0.5rem;">Retour au site</a>
@@ -237,31 +622,31 @@
       </div>
     </div>
 
-    <!-- ONGLETS -->
+    <!-- Tabs -->
     <div class="admin-tabs">
       <button class="tab-btn active" data-tab="scanner" onclick="switchTab('scanner')">Scanner QR</button>
-      <button class="tab-btn"        data-tab="guests"  onclick="switchTab('guests')">Liste des Inscrits</button>
+      <button class="tab-btn" data-tab="guests" onclick="switchTab('guests')">Liste des Inscrits</button>
     </div>
 
-    <!-- ONGLET : SCANNER -->
+    <!-- TAB: SCANNER -->
     <div class="tab-content active" id="tab-scanner">
       <div class="scanner-area">
         <h2 style="font-family:var(--font-display);color:var(--cream);margin-bottom:0.5rem;">Scanner les Tickets</h2>
 
-        <!-- État 1 : Prêt -->
+        <!-- ÉTAT 1 : Prêt -->
         <div id="state-ready">
           <p style="color:var(--white-50);font-size:0.9rem;margin-bottom:1.5rem;">Appuyez sur le bouton pour activer la caméra.</p>
           <button class="btn-gold" style="width:100%;padding:1rem;font-size:1.1rem;" onclick="startScanner()">📷 Démarrer le Scanner</button>
         </div>
 
-        <!-- État 2 : Scanning -->
+        <!-- ÉTAT 2 : Scanning -->
         <div id="state-scanning" style="display:none;">
           <div id="qr-reader" style="width:100%;border-radius:12px;overflow:hidden;"></div>
           <p style="color:var(--gold);text-align:center;margin:0.75rem 0;">🔍 Pointez vers un QR code...</p>
           <button class="btn-danger" style="width:100%;margin-top:0.5rem;" onclick="stopScanner()">Arrêter</button>
         </div>
 
-        <!-- État 3 : Résultat -->
+        <!-- ÉTAT 3 : Résultat -->
         <div id="state-result" style="display:none;"></div>
 
         <!-- Saisie manuelle -->
@@ -275,7 +660,7 @@
       </div>
     </div>
 
-    <!-- ONGLET : LISTE -->
+    <!-- TAB: GUEST LIST -->
     <div class="tab-content" id="tab-guests">
       <div class="stats-bar" id="stats-bar">
         <div class="stat-card">
@@ -296,8 +681,8 @@
         <div class="search-bar">
           <input type="text" id="search-input" placeholder="Rechercher par nom, téléphone ou ticket..." oninput="filterGuests()">
         </div>
-        <button class="btn-outline" onclick="loadGuestList()">↻ Rafraîchir</button>
-        <button class="btn-gold" style="width:auto;" onclick="openAddModal()">+ Ajouter manuellement</button>
+        <button class="btn-outline" onclick="loadGuestList()"><span id="refresh-icon">↻</span> Rafraîchir</button>
+        <button class="btn-gold" onclick="openAddModal()">+ Ajouter manuellement</button>
         <a class="btn-outline" href="/api?action=export" download style="text-decoration:none;">⬇ Exporter Excel</a>
       </div>
 
@@ -309,44 +694,375 @@
         <table class="guest-table">
           <thead>
             <tr>
-              <th>#</th><th>Nom</th><th>Sexe</th><th>Téléphone</th>
-              <th>Église</th><th>Email</th><th>Ticket ID</th><th>Statut</th><th>Actions</th>
+              <th>#</th>
+              <th>Nom</th>
+              <th>Sexe</th>
+              <th>Téléphone</th>
+              <th>Église</th>
+              <th>Email</th>
+              <th>Ticket ID</th>
+              <th>Statut</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody id="guest-table-body"></tbody>
         </table>
       </div>
     </div>
-
-  </div><!-- /admin-dashboard -->
+  </div>
 
   <!-- MODAL — Ajouter manuellement -->
-  <div id="add-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2000;align-items:center;justify-content:center;">
+  <div id="add-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2000;display:none;align-items:center;justify-content:center;">
     <div style="background:var(--navy-mid);border:1px solid var(--gold-dim);border-radius:12px;padding:2rem;width:90%;max-width:480px;">
       <h3 style="font-family:var(--font-display);color:var(--gold);margin-bottom:1.5rem;">Ajouter une inscription</h3>
       <div style="display:flex;flex-direction:column;gap:1rem;">
-        <input id="add-name"   type="text"   placeholder="Nom complet *"     style="padding:0.75rem;border-radius:8px;border:1px solid var(--white-20);background:var(--navy);color:var(--white-90);">
+        <input id="add-name"   type="text"   placeholder="Nom complet *"  style="padding:0.75rem;border-radius:8px;border:1px solid var(--white-20);background:var(--navy);color:var(--white-90);">
         <select id="add-gender" style="padding:0.75rem;border-radius:8px;border:1px solid var(--white-20);background:var(--navy);color:var(--white-90);">
           <option value="">Sexe *</option>
           <option value="Homme">Homme</option>
           <option value="Femme">Femme</option>
         </select>
-        <input id="add-phone"  type="tel"    placeholder="Téléphone *"       style="padding:0.75rem;border-radius:8px;border:1px solid var(--white-20);background:var(--navy);color:var(--white-90);">
-        <input id="add-church" type="text"   placeholder="Église *"          style="padding:0.75rem;border-radius:8px;border:1px solid var(--white-20);background:var(--navy);color:var(--white-90);">
+        <input id="add-phone"  type="tel"    placeholder="Téléphone *"    style="padding:0.75rem;border-radius:8px;border:1px solid var(--white-20);background:var(--navy);color:var(--white-90);">
+        <input id="add-church" type="text"   placeholder="Église *"       style="padding:0.75rem;border-radius:8px;border:1px solid var(--white-20);background:var(--navy);color:var(--white-90);">
         <input id="add-email"  type="email"  placeholder="Email (optionnel)" style="padding:0.75rem;border-radius:8px;border:1px solid var(--white-20);background:var(--navy);color:var(--white-90);">
         <p id="add-modal-error" style="color:#e74c3c;font-size:0.85rem;display:none;"></p>
         <div style="display:flex;gap:1rem;justify-content:flex-end;">
           <button class="btn-outline" onclick="closeAddModal()">Annuler</button>
-          <button class="btn-gold" style="width:auto;" onclick="submitManualAdd()">Ajouter</button>
+          <button class="btn-gold"    onclick="submitManualAdd()">Ajouter</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Scripts (config avant admin) -->
+  <!-- QR Scanner Library -->
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-  <script src="js/config.js"></script>
-  <script src="js/admin.js"></script>
+
+  <script>
+    // =============================================
+    // CONFIGURATION
+    // =============================================
+    // ⚠️ REMPLACE PAR TON URL Google Apps Script
+    const GOOGLE_SCRIPT_URL = '/api';
+
+    // ⚠️ CHANGE CES IDENTIFIANTS
+    const ADMIN_USERNAME = 'admin';
+    const ADMIN_PASSWORD = 'jmc2026';
+
+    // =============================================
+    // LOGIN
+    // =============================================
+    // Check session
+    if (sessionStorage.getItem('jmc-admin-auth') === 'true') {
+      showDashboard();
+    }
+
+    function doLogin() {
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value;
+      const errorEl = document.getElementById('login-error');
+
+      if (user === ADMIN_USERNAME && pass === ADMIN_PASSWORD) {
+        sessionStorage.setItem('jmc-admin-auth', 'true');
+        showDashboard();
+      } else {
+        errorEl.textContent = 'Identifiants incorrects.';
+        document.getElementById('password').value = '';
+      }
+    }
+
+    // Enter key to login
+    document.getElementById('password').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') doLogin();
+    });
+
+    function doLogout() {
+      sessionStorage.removeItem('jmc-admin-auth');
+      location.reload();
+    }
+
+    function showDashboard() {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('admin-dashboard').style.display = 'block';
+      loadGuestList();
+    }
+
+    // =============================================
+    // TABS
+    // =============================================
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabName);
+      });
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.toggle('active', content.id === `tab-${tabName}`);
+      });
+      if (tabName === 'guests') loadGuestList();
+    }
+
+    // =============================================
+    // QR SCANNER — Html5Qrcode
+    // =============================================
+    let html5QrCode  = null;
+    let isScanning   = true;
+
+    function showState(name) {
+      document.getElementById('state-ready').style.display    = name === 'ready'    ? 'block' : 'none';
+      document.getElementById('state-scanning').style.display = name === 'scanning' ? 'block' : 'none';
+      document.getElementById('state-result').style.display   = name === 'result'   ? 'block' : 'none';
+    }
+
+    async function startScanner() {
+      showState('scanning');
+      isScanning = true;
+      html5QrCode = new Html5Qrcode('qr-reader');
+      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+      html5QrCode.start({ facingMode: 'environment' }, config, onScanSuccess)
+        .catch(err => {
+          alert('Caméra inaccessible : ' + err);
+          showState('ready');
+        });
+    }
+
+    function stopScanner() {
+      if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.stop().catch(() => {});
+      }
+      showState('ready');
+    }
+
+    function onScanSuccess(decodedText) {
+      if (!isScanning) return;
+      isScanning = false;
+      if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.stop().catch(() => {});
+      }
+      handleQRCode(decodedText);
+    }
+
+    function handleQRCode(raw) {
+      let ticketId = raw.trim();
+      try {
+        const obj = JSON.parse(raw);
+        if (obj.id) ticketId = obj.id;
+      } catch (e) {}
+      verifyTicket(ticketId);
+    }
+
+    async function manualScan() {
+      const ticketId = document.getElementById('manual-ticket-id').value.trim().toUpperCase();
+      if (!ticketId) return;
+      document.getElementById('manual-ticket-id').value = '';
+      verifyTicket(ticketId);
+    }
+
+    document.getElementById('manual-ticket-id').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') manualScan();
+    });
+
+    // =============================================
+    // VÉRIFICATION TICKET
+    // =============================================
+    async function verifyTicket(ticketId) {
+      showState('result');
+      document.getElementById('state-result').innerHTML = `
+        <div style="text-align:center;padding:2rem;">
+          <div style="font-size:2rem;">⏳</div>
+          <p style="color:#fff;margin-top:0.5rem;">Vérification en cours...</p>
+        </div>`;
+
+      let result;
+      try {
+        const resp = await fetch(`${GOOGLE_SCRIPT_URL}?action=scan&ticket_id=${encodeURIComponent(ticketId)}`);
+        result = await resp.json();
+      } catch (err) {
+        result = { status: 'error', message: 'Impossible de contacter le serveur.' };
+      }
+
+      const cfg = {
+        success:        { bg: '#0d2b1a', border: '#4cc978', icon: '✅', title: 'Bienvenue !' },
+        already_scanned:{ bg: '#2b1e0d', border: '#e0a050', icon: '⚠️', title: 'Déjà scanné' },
+        not_found:      { bg: '#2b0d0d', border: '#e74c3c', icon: '❌', title: 'Ticket introuvable' },
+        error:          { bg: '#2b0d0d', border: '#e74c3c', icon: '❌', title: 'Erreur' }
+      };
+      const c = cfg[result.status] || cfg.error;
+      const d = result.data || {};
+      const details = result.data ? `
+        <div style="margin:1rem 0;text-align:left;font-size:0.95rem;">
+          <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.15);"><b>Nom</b><span>${d.full_name||'—'}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.15);"><b>Téléphone</b><span>${d.phone||'—'}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.15);"><b>Église</b><span>${d.church||'—'}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:0.5rem 0;"><b>Ticket</b><span style="font-family:monospace;">${d.ticket_id||'—'}</span></div>
+        </div>` : `<p style="color:rgba(255,255,255,0.7);margin:0.75rem 0;">${result.message||''}</p>`;
+
+      document.getElementById('state-result').innerHTML = `
+        <div style="background:${c.bg};border:2px solid ${c.border};border-radius:16px;padding:2rem;color:#fff;text-align:center;">
+          <div style="font-size:4rem;">${c.icon}</div>
+          <h2 style="color:${c.border};margin:0.5rem 0;font-family:var(--font-display);">${c.title}</h2>
+          ${details}
+          <button onclick="isScanning=true;showState('ready')" style="margin-top:1.5rem;padding:0.8rem;width:100%;background:${c.border};border:none;border-radius:8px;color:#000;font-weight:700;font-size:1rem;cursor:pointer;">
+            Scanner suivant
+          </button>
+        </div>`;
+    }
+
+    // =============================================
+    // GUEST LIST — load from Google Sheets
+    // =============================================
+    let allGuests = [];
+
+    async function loadGuestList() {
+      const loading = document.getElementById('guest-list-loading');
+      const tableWrap = document.getElementById('guest-table-wrap');
+
+      loading.style.display = 'block';
+      tableWrap.style.display = 'none';
+
+      try {
+        const controller2 = new AbortController();
+        const timeout2 = setTimeout(() => controller2.abort(), 5000);
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=list`, { signal: controller2.signal });
+        clearTimeout(timeout2);
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          allGuests = result.data || [];
+          renderGuestList(allGuests);
+          updateStats(allGuests);
+          loading.style.display = 'none';
+          tableWrap.style.display = 'block';
+        } else {
+          loading.innerHTML = `<p style="color:var(--red);">Erreur: ${result.message}</p>`;
+        }
+      } catch (err) {
+        console.error('Load error:', err);
+        loading.innerHTML = '<p style="color:var(--red);">Erreur de connexion au serveur.</p>';
+      }
+    }
+
+    function renderGuestList(guests) {
+      const tbody = document.getElementById('guest-table-body');
+
+      if (guests.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--white-50);padding:2rem;">Aucun inscrit trouvé.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = guests.map((g, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td style="color:var(--cream);font-weight:500;">${g.full_name || '—'}</td>
+          <td>${g.gender || '—'}</td>
+          <td>${g.phone || '—'}</td>
+          <td>${g.church || '—'}</td>
+          <td style="font-size:0.85rem;">${g.email && g.email !== 'N/A' ? g.email : '—'}</td>
+          <td style="font-family:monospace;font-size:0.8rem;">${g.ticket_id || '—'}</td>
+          <td>
+            <span class="status-badge ${g.scan_status === 'Scanné' ? 'scanned' : 'pending'}">
+              ${g.scan_status === 'Scanné' ? 'Scanné' : 'En attente'}
+            </span>
+          </td>
+          <td>
+            <button onclick="deleteGuest('${g.ticket_id}')" style="background:transparent;border:1px solid #e74c3c;color:#e74c3c;padding:0.3rem 0.7rem;border-radius:6px;cursor:pointer;font-size:0.8rem;">🗑 Supprimer</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function updateStats(guests) {
+      const total = guests.length;
+      const scanned = guests.filter(g => g.scan_status === 'Scanné').length;
+      const pending = total - scanned;
+
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-scanned').textContent = scanned;
+      document.getElementById('stat-pending').textContent = pending;
+    }
+
+    function filterGuests() {
+      const query = document.getElementById('search-input').value.toLowerCase();
+      const filtered = allGuests.filter(g =>
+        (g.full_name || '').toLowerCase().includes(query) ||
+        (g.phone || '').toLowerCase().includes(query) ||
+        (g.ticket_id || '').toLowerCase().includes(query) ||
+        (g.church || '').toLowerCase().includes(query)
+      );
+      renderGuestList(filtered);
+    }
+
+    // =============================================
+    // SUPPRIMER UNE INSCRIPTION
+    // =============================================
+    async function deleteGuest(ticketId) {
+      if (!confirm(`Supprimer l'inscription avec le ticket ${ticketId} ?`)) return;
+      try {
+        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=delete&ticket_id=${encodeURIComponent(ticketId)}`);
+        const result = await res.json();
+        if (result.status === 'success') {
+          await loadGuestList();
+        } else {
+          alert('Erreur : ' + result.message);
+        }
+      } catch (err) {
+        alert('Erreur de connexion.');
+      }
+    }
+
+    // =============================================
+    // AJOUTER MANUELLEMENT
+    // =============================================
+    function generateTicketId() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let id = 'JMC-';
+      for (let i = 0; i < 8; i++) id += chars[Math.floor(Math.random() * chars.length)];
+      return id;
+    }
+
+    function openAddModal() {
+      document.getElementById('add-modal').style.display = 'flex';
+      document.getElementById('add-name').focus();
+    }
+
+    function closeAddModal() {
+      document.getElementById('add-modal').style.display = 'none';
+      ['add-name','add-phone','add-church','add-email'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('add-gender').value = '';
+      document.getElementById('add-modal-error').style.display = 'none';
+    }
+
+    async function submitManualAdd() {
+      const name   = document.getElementById('add-name').value.trim();
+      const gender = document.getElementById('add-gender').value;
+      const phone  = document.getElementById('add-phone').value.trim();
+      const church = document.getElementById('add-church').value.trim();
+      const email  = document.getElementById('add-email').value.trim() || 'N/A';
+      const errEl  = document.getElementById('add-modal-error');
+
+      if (!name || !gender || !phone || !church) {
+        errEl.textContent = 'Veuillez remplir tous les champs obligatoires.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      const ticketId  = generateTicketId();
+      const timestamp = new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Douala' });
+
+      try {
+        const params = new URLSearchParams({ action:'register', full_name:name, gender, phone, church, email, ticket_id:ticketId, timestamp });
+        const res    = await fetch(`${GOOGLE_SCRIPT_URL}?${params}`);
+        const result = await res.json();
+        if (result.status === 'success') {
+          closeAddModal();
+          await loadGuestList();
+        } else {
+          errEl.textContent = 'Erreur : ' + result.message;
+          errEl.style.display = 'block';
+        }
+      } catch (err) {
+        errEl.textContent = 'Erreur de connexion.';
+        errEl.style.display = 'block';
+      }
+    }
+  </script>
 
 </body>
 </html>

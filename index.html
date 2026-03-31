@@ -4,46 +4,54 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JMC — Soirée Cinéma 2026</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload"
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap"
-    as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap">
-  </noscript>
-
+  <!-- Google Fonts — non-bloquant -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap"></noscript>
+  <!-- QR Code Library — non-bloquant -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js" defer></script>
+  <!-- html2canvas for ticket download — non-bloquant -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 
   <style>
+    /* ============================================
+       CSS VARIABLES — CINEMA DARK BLUE & GOLD
+       ============================================ */
     :root {
-      --navy-deep:  #0a1628;
-      --navy:       #0f1f3d;
-      --navy-mid:   #162a50;
+      --navy-deep: #0a1628;
+      --navy: #0f1f3d;
+      --navy-mid: #162a50;
       --navy-light: #1d3461;
-      --gold:        #c9a84c;
-      --gold-light:  #e0c878;
+      --gold: #c9a84c;
+      --gold-light: #e0c878;
       --gold-bright: #f0d98c;
-      --gold-dim:    #8a7235;
-      --cream:       #f5efe0;
-      --cream-soft:  #ede5d3;
-      --white:       #ffffff;
-      --white-10:    rgba(255,255,255,0.1);
-      --white-20:    rgba(255,255,255,0.2);
-      --white-50:    rgba(255,255,255,0.5);
-      --white-70:    rgba(255,255,255,0.7);
-      --white-90:    rgba(255,255,255,0.9);
-      --gold-glow:   rgba(201,168,76,0.3);
-      --shadow:      0 4px 30px rgba(0,0,0,0.4);
+      --gold-dim: #8a7235;
+      --cream: #f5efe0;
+      --cream-soft: #ede5d3;
+      --white: #ffffff;
+      --white-10: rgba(255,255,255,0.1);
+      --white-20: rgba(255,255,255,0.2);
+      --white-50: rgba(255,255,255,0.5);
+      --white-70: rgba(255,255,255,0.7);
+      --white-90: rgba(255,255,255,0.9);
+      --gold-glow: rgba(201,168,76,0.3);
+      --shadow: 0 4px 30px rgba(0,0,0,0.4);
       --font-display: 'Playfair Display', Georgia, serif;
-      --font-body:    'Outfit', 'Segoe UI', sans-serif;
-      --font-accent:  'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Outfit', 'Segoe UI', sans-serif;
+      --font-accent: 'Cormorant Garamond', Georgia, serif;
     }
 
+    /* ============================================
+       RESET & BASE
+       ============================================ */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; font-size: 16px; }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
     body {
       font-family: var(--font-body);
       background: var(--navy-deep);
@@ -53,253 +61,717 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* NAVIGATION */
+    /* ============================================
+       NAVIGATION
+       ============================================ */
     nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
       padding: 1rem 2rem;
-      display: flex; justify-content: space-between; align-items: center;
-      background: rgba(10,22,40,0.85);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(10, 22, 40, 0.85);
       backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--white-10);
       transition: all 0.4s ease;
     }
-    nav.scrolled { padding: 0.6rem 2rem; background: rgba(10,22,40,0.95); }
+
+    nav.scrolled {
+      padding: 0.6rem 2rem;
+      background: rgba(10, 22, 40, 0.95);
+    }
+
     .nav-logo {
-      font-family: var(--font-display); font-size: 1.4rem; font-weight: 700;
-      color: var(--gold); text-decoration: none; letter-spacing: 3px;
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-decoration: none;
+      letter-spacing: 3px;
     }
-    .nav-links { display: flex; list-style: none; gap: 2rem; }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
     .nav-links a {
-      color: var(--white-70); text-decoration: none; font-size: 0.85rem;
-      font-weight: 500; letter-spacing: 2px; text-transform: uppercase;
-      transition: color 0.3s; position: relative;
+      color: var(--white-70);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: color 0.3s;
+      position: relative;
     }
+
     .nav-links a::after {
-      content: ''; position: absolute; bottom: -4px; left: 0;
-      width: 0; height: 1px; background: var(--gold); transition: width 0.3s ease;
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--gold);
+      transition: width 0.3s ease;
     }
+
     .nav-links a:hover { color: var(--gold); }
     .nav-links a:hover::after { width: 100%; }
-    .nav-hamburger { display: none; flex-direction: column; cursor: pointer; gap: 5px; }
-    .nav-hamburger span { width: 24px; height: 2px; background: var(--gold); transition: all 0.3s; }
 
-    /* HERO */
-    .hero {
-      min-height: 100vh; display: flex; flex-direction: column;
-      justify-content: center; align-items: center; text-align: center;
-      padding: 6rem 2rem 4rem; position: relative; overflow: hidden;
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 5px;
     }
+
+    .nav-hamburger span {
+      width: 24px;
+      height: 2px;
+      background: var(--gold);
+      transition: all 0.3s;
+    }
+
+    /* ============================================
+       HERO SECTION
+       ============================================ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Projector light beam effect */
     .hero::before {
-      content: ''; position: absolute; top: -10%; left: 50%;
-      width: 600px; height: 140%;
-      background: linear-gradient(180deg, transparent 0%, rgba(201,168,76,0.03) 20%, rgba(201,168,76,0.06) 50%, rgba(201,168,76,0.03) 80%, transparent 100%);
+      content: '';
+      position: absolute;
+      top: -10%;
+      left: 50%;
+      width: 600px;
+      height: 140%;
+      background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(201,168,76,0.03) 20%,
+        rgba(201,168,76,0.06) 50%,
+        rgba(201,168,76,0.03) 80%,
+        transparent 100%
+      );
       transform: translateX(-50%);
       clip-path: polygon(40% 0%, 60% 0%, 100% 100%, 0% 100%);
       pointer-events: none;
     }
+
+    /* Film grain overlay */
     .hero::after {
-      content: ''; position: absolute; inset: 0;
+      content: '';
+      position: absolute;
+      inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-      pointer-events: none; opacity: 0.5;
+      pointer-events: none;
+      opacity: 0.5;
     }
+
     .hero-badge {
-      font-family: var(--font-accent); font-size: 1rem; font-weight: 300;
-      letter-spacing: 6px; text-transform: uppercase; color: var(--gold);
-      margin-bottom: 1rem; opacity: 0; animation: fadeUp 1s 0.3s forwards;
+      font-family: var(--font-accent);
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeUp 1s 0.3s forwards;
     }
+
     .hero-title {
-      font-family: var(--font-display); font-size: clamp(3rem,8vw,6.5rem);
-      font-weight: 900; line-height: 1; margin-bottom: 0.3rem;
-      opacity: 0; animation: fadeUp 1s 0.5s forwards;
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 0.3rem;
+      opacity: 0;
+      animation: fadeUp 1s 0.5s forwards;
     }
-    .hero-title .line1 { display: block; color: var(--cream); }
+
+    .hero-title .line1 {
+      display: block;
+      color: var(--cream);
+    }
+
     .hero-title .line2 {
       display: block;
       background: linear-gradient(135deg, var(--gold), var(--gold-light), var(--gold));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
+
     .hero-divider {
-      width: 60px; height: 1px; background: var(--gold); margin: 1.5rem auto;
-      opacity: 0; animation: scaleIn 0.8s 0.8s forwards;
+      width: 60px;
+      height: 1px;
+      background: var(--gold);
+      margin: 1.5rem auto;
+      opacity: 0;
+      animation: scaleIn 0.8s 0.8s forwards;
     }
+
     .hero-info {
-      font-family: var(--font-accent); font-size: 1.3rem; font-weight: 300;
-      color: var(--white-70); letter-spacing: 2px; margin-bottom: 0.5rem;
-      opacity: 0; animation: fadeUp 1s 1s forwards;
+      font-family: var(--font-accent);
+      font-size: 1.3rem;
+      font-weight: 300;
+      color: var(--white-70);
+      letter-spacing: 2px;
+      margin-bottom: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 1s 1s forwards;
     }
-    .hero-info strong { color: var(--gold-light); font-weight: 600; }
+
+    .hero-info strong {
+      color: var(--gold-light);
+      font-weight: 600;
+    }
+
     .hero-venue {
-      font-size: 0.9rem; color: var(--white-50); letter-spacing: 3px;
-      text-transform: uppercase; margin-bottom: 0.8rem;
-      opacity: 0; animation: fadeUp 1s 1.2s forwards;
+      font-size: 0.9rem;
+      color: var(--white-50);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+      opacity: 0;
+      animation: fadeUp 1s 1.2s forwards;
     }
+
     .hero-free {
-      display: none; border: 1px solid var(--gold-dim); padding: 0.4rem 1.5rem;
-      font-family: var(--font-accent); font-size: 1rem; letter-spacing: 4px;
-      text-transform: uppercase; color: var(--gold); margin-bottom: 2rem;
-      opacity: 0; animation: fadeUp 1s 1.3s forwards;
+      display: inline-block;
+      border: 1px solid var(--gold-dim);
+      padding: 0.4rem 1.5rem;
+      font-family: var(--font-accent);
+      font-size: 1rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 1s 1.3s forwards;
     }
-    .hero-cta { opacity: 0; animation: fadeUp 1s 1.5s forwards; }
 
-    /* COUNTDOWN */
+    .hero-cta {
+      opacity: 0;
+      animation: fadeUp 1s 1.5s forwards;
+    }
+
+    /* ============================================
+       COUNTDOWN
+       ============================================ */
     .countdown-section {
-      padding: 3rem 2rem; text-align: center;
+      padding: 3rem 2rem;
+      text-align: center;
       background: linear-gradient(180deg, var(--navy-deep) 0%, var(--navy) 100%);
-      border-top: 1px solid var(--white-10); border-bottom: 1px solid var(--white-10);
+      border-top: 1px solid var(--white-10);
+      border-bottom: 1px solid var(--white-10);
     }
-    .countdown-label {
-      font-family: var(--font-accent); font-size: 0.9rem; letter-spacing: 4px;
-      text-transform: uppercase; color: var(--gold-dim); margin-bottom: 1.5rem;
-    }
-    .countdown { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
-    .countdown-item { display: flex; flex-direction: column; align-items: center; min-width: 80px; }
-    .countdown-number { font-family: var(--font-display); font-size: 3rem; font-weight: 700; color: var(--gold-light); line-height: 1; }
-    .countdown-unit { font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--white-50); margin-top: 0.3rem; }
-    .countdown-separator { font-family: var(--font-display); font-size: 2.5rem; color: var(--gold-dim); align-self: flex-start; margin-top: 0.2rem; }
-    .countdown-ended { font-family: var(--font-display); font-size: 1.8rem; color: var(--gold); }
 
-    /* PROGRAMME */
-    .programme { padding: 5rem 2rem; max-width: 900px; margin: 0 auto; }
+    .countdown-label {
+      font-family: var(--font-accent);
+      font-size: 0.9rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 1.5rem;
+    }
+
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .countdown-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 80px;
+    }
+
+    .countdown-number {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      line-height: 1;
+    }
+
+    .countdown-unit {
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--white-50);
+      margin-top: 0.3rem;
+    }
+
+    .countdown-separator {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      color: var(--gold-dim);
+      align-self: flex-start;
+      margin-top: 0.2rem;
+    }
+
+    .countdown-ended {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      color: var(--gold);
+    }
+
+    /* ============================================
+       PROGRAMME SECTION
+       ============================================ */
+    .programme {
+      padding: 5rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
     .section-label {
-      font-family: var(--font-accent); font-size: 0.85rem; letter-spacing: 5px;
-      text-transform: uppercase; color: var(--gold-dim); text-align: center; margin-bottom: 0.5rem;
+      font-family: var(--font-accent);
+      font-size: 0.85rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      text-align: center;
+      margin-bottom: 0.5rem;
     }
+
     .section-title {
-      font-family: var(--font-display); font-size: clamp(2rem,5vw,3rem);
-      font-weight: 700; text-align: center; color: var(--cream); margin-bottom: 3rem;
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      text-align: center;
+      color: var(--cream);
+      margin-bottom: 3rem;
     }
-    .timeline { position: relative; padding-left: 2rem; }
+
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+
     .timeline::before {
-      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 1px;
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 1px;
       background: linear-gradient(180deg, transparent, var(--gold-dim), var(--gold), var(--gold-dim), transparent);
     }
-    .timeline-item { position: relative; padding: 0 0 2.5rem 2rem; }
-    .timeline-item::before {
-      content: ''; position: absolute; left: -4.5px; top: 6px;
-      width: 10px; height: 10px; border-radius: 50%;
-      background: var(--gold); box-shadow: 0 0 12px var(--gold-glow);
-    }
-    .timeline-time { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--gold); margin-bottom: 0.2rem; }
-    .timeline-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; color: var(--cream); margin-bottom: 0.3rem; }
-    .timeline-desc { font-size: 0.9rem; color: var(--white-50); line-height: 1.5; }
 
-    /* INSCRIPTION */
+    .timeline-item {
+      position: relative;
+      padding: 0 0 2.5rem 2rem;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -4.5px;
+      top: 6px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 12px var(--gold-glow);
+    }
+
+    .timeline-time {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 0.2rem;
+    }
+
+    .timeline-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--cream);
+      margin-bottom: 0.3rem;
+    }
+
+    .timeline-desc {
+      font-size: 0.9rem;
+      color: var(--white-50);
+      line-height: 1.5;
+    }
+
+    /* ============================================
+       INSCRIPTION SECTION
+       ============================================ */
     .inscription {
       padding: 5rem 2rem;
       background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
     }
+
     .form-container {
-      max-width: 550px; margin: 0 auto;
-      background: rgba(22,42,80,0.4); border: 1px solid var(--white-10);
-      border-radius: 2px; padding: 3rem 2.5rem; position: relative; overflow: hidden;
+      max-width: 550px;
+      margin: 0 auto;
+      background: rgba(22, 42, 80, 0.4);
+      border: 1px solid var(--white-10);
+      border-radius: 2px;
+      padding: 3rem 2.5rem;
+      position: relative;
+      overflow: hidden;
     }
+
     .form-container::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
       background: linear-gradient(90deg, transparent, var(--gold), transparent);
     }
-    .form-group { margin-bottom: 1.5rem; }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
     .form-group label {
-      display: block; font-family: var(--font-accent); font-size: 0.85rem;
-      letter-spacing: 2px; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 0.5rem;
+      display: block;
+      font-family: var(--font-accent);
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.5rem;
     }
-    .form-group input, .form-group select {
-      width: 100%; padding: 0.8rem 1rem;
-      background: rgba(255,255,255,0.05); border: 1px solid var(--white-20);
-      border-radius: 2px; color: var(--white-90); font-family: var(--font-body);
-      font-size: 0.95rem; transition: border-color 0.3s, background 0.3s; outline: none;
-    }
-    .form-group input:focus, .form-group select:focus {
-      border-color: var(--gold); background: rgba(201,168,76,0.05);
-    }
-    .form-group input::placeholder { color: var(--white-50); }
-    .form-group select option { background: var(--navy); color: var(--white-90); }
 
-    /* BUTTONS */
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--white-20);
+      border-radius: 2px;
+      color: var(--white-90);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      transition: border-color 0.3s, background 0.3s;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--gold);
+      background: rgba(201,168,76,0.05);
+    }
+
+    .form-group input::placeholder {
+      color: var(--white-50);
+    }
+
+    .form-group select option {
+      background: var(--navy);
+      color: var(--white-90);
+    }
+
+    /* ============================================
+       BUTTONS
+       ============================================ */
     .btn-gold {
-      display: inline-block; padding: 0.9rem 2.5rem;
+      display: inline-block;
+      padding: 0.9rem 2.5rem;
       background: linear-gradient(135deg, var(--gold), var(--gold-light));
-      color: var(--navy-deep); font-family: var(--font-body); font-size: 0.85rem;
-      font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
-      text-decoration: none; border: none; border-radius: 2px; cursor: pointer;
-      transition: all 0.3s ease; position: relative; overflow: hidden;
+      color: var(--navy-deep);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
-    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 6px 25px var(--gold-glow); }
-    .btn-gold:active { transform: translateY(0); }
-    .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    .btn-outline {
-      display: inline-block; padding: 0.9rem 2.5rem; background: transparent;
-      color: var(--gold); font-family: var(--font-body); font-size: 0.85rem;
-      font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
-      text-decoration: none; border: 1px solid var(--gold); border-radius: 2px;
-      cursor: pointer; transition: all 0.3s ease;
-    }
-    .btn-outline:hover { background: var(--gold); color: var(--navy-deep); }
-    .btn-full { width: 100%; text-align: center; }
 
-    /* TICKET */
-    #confirmation { display: none; max-width: 550px; margin: 0 auto; text-align: center; }
+    .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px var(--gold-glow);
+    }
+
+    .btn-gold:active {
+      transform: translateY(0);
+    }
+
+    .btn-gold:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-outline {
+      display: inline-block;
+      padding: 0.9rem 2.5rem;
+      background: transparent;
+      color: var(--gold);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid var(--gold);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-outline:hover {
+      background: var(--gold);
+      color: var(--navy-deep);
+    }
+
+    .btn-full {
+      width: 100%;
+      text-align: center;
+    }
+
+    /* ============================================
+       TICKET / CONFIRMATION
+       ============================================ */
+    #confirmation {
+      display: none;
+      max-width: 550px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
     .ticket-card {
       background: linear-gradient(145deg, var(--navy-mid), var(--navy));
-      border: 1px solid var(--gold-dim); border-radius: 2px;
-      padding: 2.5rem 2rem; position: relative; overflow: hidden; margin-bottom: 1.5rem;
+      border: 1px solid var(--gold-dim);
+      border-radius: 2px;
+      padding: 2.5rem 2rem;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
     }
+
     .ticket-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
       background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-light), var(--gold), var(--gold-dim));
     }
+
+    /* Ticket perforations */
     .ticket-card::after {
-      content: ''; position: absolute; left: 0; right: 0; bottom: 80px; height: 1px;
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 80px;
+      height: 1px;
       background: repeating-linear-gradient(90deg, var(--gold-dim) 0, var(--gold-dim) 8px, transparent 8px, transparent 16px);
     }
-    .ticket-header { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--gold); margin-bottom: 0.2rem; }
-    .ticket-subtitle { font-family: var(--font-accent); font-size: 0.9rem; color: var(--white-50); letter-spacing: 2px; margin-bottom: 1.5rem; }
-    .ticket-qr { margin: 1.5rem auto; display: flex; justify-content: center; }
-    .ticket-qr canvas { border: 4px solid var(--gold-dim); border-radius: 2px; }
-    .ticket-details { text-align: left; padding-top: 1.5rem; }
-    .ticket-detail-row { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid var(--white-10); }
-    .ticket-detail-label { font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-dim); }
-    .ticket-detail-value { font-weight: 500; color: var(--cream); font-size: 0.9rem; }
-    .ticket-id { margin-top: 1rem; font-family: monospace; font-size: 0.75rem; color: var(--white-50); letter-spacing: 1px; }
 
-    /* FOOTER */
-    footer { text-align: center; padding: 2rem; border-top: 1px solid var(--white-10); font-size: 0.8rem; color: var(--white-50); }
-    footer a { color: var(--gold-dim); text-decoration: none; }
-    footer a:hover { color: var(--gold); }
-
-    /* STATUS */
-    .status-msg { padding: 1rem; border-radius: 2px; margin-top: 1rem; font-size: 0.9rem; text-align: center; }
-    .status-msg.success { background: rgba(76,201,120,0.1); border: 1px solid rgba(76,201,120,0.3); color: #7ddeaa; }
-    .status-msg.error   { background: rgba(201,76,76,0.1);  border: 1px solid rgba(201,76,76,0.3);  color: #de7d7d; }
-
-    /* SPINNER */
-    .spinner {
-      display: inline-block; width: 20px; height: 20px;
-      border: 2px solid var(--gold-dim); border-top-color: var(--gold);
-      border-radius: 50%; animation: spin 0.8s linear infinite;
-      margin-right: 0.5rem; vertical-align: middle;
+    .ticket-header {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 0.2rem;
     }
 
-    /* ANIMATIONS */
-    @keyframes fadeUp  { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-    @keyframes scaleIn { from { opacity:0; transform:scaleX(0); }       to { opacity:1; transform:scaleX(1); }     }
-    @keyframes spin    { to   { transform:rotate(360deg); }                                                         }
+    .ticket-subtitle {
+      font-family: var(--font-accent);
+      font-size: 0.9rem;
+      color: var(--white-50);
+      letter-spacing: 2px;
+      margin-bottom: 1.5rem;
+    }
 
-    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .ticket-qr {
+      margin: 1.5rem auto;
+      display: flex;
+      justify-content: center;
+    }
 
-    /* FILM STRIP */
+    .ticket-qr canvas {
+      border: 4px solid var(--gold-dim);
+      border-radius: 2px;
+    }
+
+    .ticket-details {
+      text-align: left;
+      padding-top: 1.5rem;
+    }
+
+    .ticket-detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid var(--white-10);
+    }
+
+    .ticket-detail-label {
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+    }
+
+    .ticket-detail-value {
+      font-weight: 500;
+      color: var(--cream);
+      font-size: 0.9rem;
+    }
+
+    .ticket-id {
+      margin-top: 1rem;
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: var(--white-50);
+      letter-spacing: 1px;
+    }
+
+    /* ============================================
+       FOOTER
+       ============================================ */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--white-10);
+      font-size: 0.8rem;
+      color: var(--white-50);
+    }
+
+    footer a {
+      color: var(--gold-dim);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--gold);
+    }
+
+    /* ============================================
+       STATUS / MESSAGES
+       ============================================ */
+    .status-msg {
+      padding: 1rem;
+      border-radius: 2px;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .status-msg.success {
+      background: rgba(76, 201, 120, 0.1);
+      border: 1px solid rgba(76, 201, 120, 0.3);
+      color: #7ddeaa;
+    }
+
+    .status-msg.error {
+      background: rgba(201, 76, 76, 0.1);
+      border: 1px solid rgba(201, 76, 76, 0.3);
+      color: #de7d7d;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--gold-dim);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 0.5rem;
+      vertical-align: middle;
+    }
+
+    /* ============================================
+       ANIMATIONS
+       ============================================ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scaleX(0); }
+      to { opacity: 1; transform: scaleX(1); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Scroll-triggered fade */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============================================
+       FILM STRIP DECORATIVE BORDERS
+       ============================================ */
     .film-strip-top, .film-strip-bottom {
       height: 20px;
-      background: repeating-linear-gradient(90deg, var(--gold-dim) 0, var(--gold-dim) 12px, transparent 12px, transparent 20px);
+      background:
+        repeating-linear-gradient(
+          90deg,
+          var(--gold-dim) 0,
+          var(--gold-dim) 12px,
+          transparent 12px,
+          transparent 20px
+        );
       opacity: 0.3;
     }
 
-    /* RESPONSIVE */
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
     @media (max-width: 768px) {
       .nav-links { display: none; }
       .nav-links.open {
-        display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0;
-        background: rgba(10,22,40,0.97); padding: 1.5rem 2rem; gap: 1.2rem;
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(10, 22, 40, 0.97);
+        padding: 1.5rem 2rem;
+        gap: 1.2rem;
         border-bottom: 1px solid var(--white-10);
       }
       .nav-hamburger { display: flex; }
@@ -310,6 +782,7 @@
       .timeline { padding-left: 1.5rem; }
       .timeline-item { padding-left: 1.5rem; }
     }
+
     @media (max-width: 480px) {
       .hero { padding: 5rem 1.2rem 3rem; }
       .countdown-item { min-width: 60px; }
@@ -318,7 +791,7 @@
 </head>
 <body>
 
-  <!-- NAVIGATION -->
+  <!-- ========== NAVIGATION ========== -->
   <nav id="navbar">
     <a href="#" class="nav-logo">JMC</a>
     <ul class="nav-links" id="navLinks">
@@ -331,7 +804,7 @@
     </div>
   </nav>
 
-  <!-- HERO -->
+  <!-- ========== HERO ========== -->
   <section class="hero" id="accueil">
     <p class="hero-badge">JMC Présente</p>
     <h1 class="hero-title">
@@ -339,15 +812,15 @@
       <span class="line2">Cinéma</span>
     </h1>
     <div class="hero-divider"></div>
-    <p class="hero-info" id="hero-date"></p>
-    <p class="hero-venue" id="hero-venue"></p>
-    <span class="hero-free" id="hero-free">Entrée Libre</span>
+    <p class="hero-info"><strong>12 Avril 2026</strong> &nbsp;·&nbsp; 15h30</p>
+    <p class="hero-venue">Salle de l'Auditorium</p>
+    <span class="hero-free">Entrée Libre</span>
     <div class="hero-cta">
       <a href="#inscription" class="btn-gold">Réserver ma Place</a>
     </div>
   </section>
 
-  <!-- COUNTDOWN -->
+  <!-- ========== COUNTDOWN ========== -->
   <section class="countdown-section" id="countdown-section">
     <p class="countdown-label">L'événement commence dans</p>
     <div class="countdown" id="countdown"></div>
@@ -355,20 +828,48 @@
 
   <div class="film-strip-top"></div>
 
-  <!-- PROGRAMME (rendu par app.js depuis config) -->
+  <!-- ========== PROGRAMME ========== -->
   <section class="programme" id="programme">
     <p class="section-label reveal">Déroulement</p>
     <h2 class="section-title reveal">Programme de la Soirée</h2>
-    <div class="timeline" id="timeline"></div>
+
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <div class="timeline-time">15h30</div>
+        <div class="timeline-title">Accueil & Installation</div>
+        <div class="timeline-desc">Arrivée des invités, installation dans la salle et ambiance musicale.</div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-time">16h00</div>
+        <div class="timeline-title">Mot de Bienvenue</div>
+        <div class="timeline-desc">Ouverture officielle de la soirée cinéma par les responsables JMC.</div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-time">16h15</div>
+        <div class="timeline-title">Projection du Film</div>
+        <div class="timeline-desc">Diffusion du film sélectionné — un moment de partage et de réflexion.</div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-time">18h00</div>
+        <div class="timeline-title">Discussion & Échanges</div>
+        <div class="timeline-desc">Débat ouvert sur les thèmes du film, partage d'impressions et de réflexions.</div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-time">18h30</div>
+        <div class="timeline-title">Collation & Clôture</div>
+        <div class="timeline-desc">Moment convivial autour d'une collation, photos et clôture de la soirée.</div>
+      </div>
+    </div>
   </section>
 
   <div class="film-strip-bottom"></div>
 
-  <!-- INSCRIPTION -->
+  <!-- ========== INSCRIPTION ========== -->
   <section class="inscription" id="inscription">
     <p class="section-label reveal">Réservation</p>
     <h2 class="section-title reveal">Réservez Votre Place</h2>
 
+    <!-- FORMULAIRE -->
     <div class="form-container reveal" id="form-container">
       <form id="regForm" novalidate>
         <div class="form-group">
@@ -392,10 +893,7 @@
           <input type="text" id="church" name="church" placeholder="Ex: MEEC CENTRE" required>
         </div>
         <div class="form-group">
-          <label for="email">
-            Email
-            <span style="color:var(--white-50);font-size:0.7rem;text-transform:none;letter-spacing:0;">(optionnel)</span>
-          </label>
+          <label for="email">Email <span style="color:var(--white-50); font-size:0.7rem; text-transform:none; letter-spacing:0;">(optionnel)</span></label>
           <input type="email" id="email" name="email" placeholder="Ex: aureliembarga@gmail.com">
         </div>
         <div id="places-restantes" style="text-align:center;margin-bottom:0.8rem;font-size:0.9rem;color:var(--gold-light);"></div>
@@ -404,11 +902,11 @@
       </form>
     </div>
 
-    <!-- TICKET / CONFIRMATION -->
+    <!-- CONFIRMATION / TICKET -->
     <div id="confirmation">
       <div class="ticket-card" id="ticket-card">
-        <div class="ticket-header" id="ticket-header"></div>
-        <div class="ticket-subtitle" id="ticket-subtitle"></div>
+        <div class="ticket-header">JMC — SOIRÉE CINÉMA</div>
+        <div class="ticket-subtitle">12 Avril 2026 · 15h30</div>
         <div class="ticket-qr">
           <canvas id="qrcodeCanvas"></canvas>
         </div>
@@ -422,14 +920,326 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- ========== FOOTER ========== -->
   <footer>
-    <p>&copy; 2026 JMC — Soirée Cinéma. Tous droits réservés. | <a href="admin.html">Admin</a></p>
+    <p>&copy; 2026 JMC — Soirée Cinéma. Tous droits réservés. | <a href="admin.html" id="admin-link">Admin</a></p>
+    <p style="margin-top:0.3rem;">
+      <a href="jmc-soiree-cine-avril-2026.onrender.com" target="_blank">JMC Ciné</a>
+    </p>
   </footer>
 
-  <!-- Scripts (config avant app) -->
-  <script src="js/config.js"></script>
-  <script src="js/app.js" defer></script>
+  <!-- ========== JAVASCRIPT ========== -->
+  <script>
+    // =============================================
+    // CONFIGURATION — GOOGLE SHEETS
+    // =============================================
+    // ⚠️ REMPLACE CETTE URL par l'URL de ton Google Apps Script déployé en Web App
+    const GOOGLE_SCRIPT_URL = '/api';
+
+    // =============================================
+    // NAVIGATION
+    // =============================================
+    function toggleNav() {
+      document.getElementById('navLinks').classList.toggle('open');
+    }
+
+    // Close mobile nav on link click
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.remove('open');
+      });
+    });
+
+    // Nav scroll effect
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // =============================================
+    // COUNTDOWN
+    // =============================================
+    function updateCountdown() {
+      const target = new Date('2026-04-12T15:30:00+01:00'); // WAT (Cameroon)
+      const now = new Date();
+      const diff = target - now;
+
+      const container = document.getElementById('countdown');
+
+      if (diff <= 0) {
+        container.innerHTML = '<div class="countdown-ended">L\'événement a commencé !</div>';
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      container.innerHTML = `
+        <div class="countdown-item">
+          <div class="countdown-number">${String(days).padStart(2, '0')}</div>
+          <div class="countdown-unit">Jours</div>
+        </div>
+        <div class="countdown-separator">:</div>
+        <div class="countdown-item">
+          <div class="countdown-number">${String(hours).padStart(2, '0')}</div>
+          <div class="countdown-unit">Heures</div>
+        </div>
+        <div class="countdown-separator">:</div>
+        <div class="countdown-item">
+          <div class="countdown-number">${String(minutes).padStart(2, '0')}</div>
+          <div class="countdown-unit">Minutes</div>
+        </div>
+        <div class="countdown-separator">:</div>
+        <div class="countdown-item">
+          <div class="countdown-number">${String(seconds).padStart(2, '0')}</div>
+          <div class="countdown-unit">Secondes</div>
+        </div>
+      `;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // =============================================
+    // VÉRIFICATION PLACES RESTANTES
+    // =============================================
+    async function checkCapacity() {
+      try {
+        const r = await fetch('/api?action=list');
+        const data = await r.json();
+        if (data.status === 'success') {
+          const taken = data.data.length;
+          const remaining = 100 - taken;
+          const el = document.getElementById('places-restantes');
+          if (remaining <= 0) {
+            el.innerHTML = '<strong style="color:#c94c4c;">Complet — Plus de places disponibles</strong>';
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').textContent = 'Complet';
+          } else {
+            el.textContent = `${remaining} place${remaining > 1 ? 's' : ''} restante${remaining > 1 ? 's' : ''} sur 100`;
+          }
+        }
+      } catch(e) { /* silencieux */ }
+    }
+    checkCapacity();
+
+    // =============================================
+    // SCROLL REVEAL
+    // =============================================
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // =============================================
+    // GENERATE UNIQUE TICKET ID
+    // =============================================
+    function generateTicketId() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let id = 'JMC-CIN-';
+      for (let i = 0; i < 6; i++) {
+        id += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return id;
+    }
+
+    // =============================================
+    // FORM SUBMISSION
+    // =============================================
+    const regForm = document.getElementById('regForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const formStatus = document.getElementById('form-status');
+
+    regForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const fullName = document.getElementById('fullName').value.trim();
+      const gender = document.getElementById('gender').value;
+      const phone = document.getElementById('phone').value.trim();
+      const church = document.getElementById('church').value.trim();
+      const email = document.getElementById('email').value.trim();
+
+      if (!fullName || !gender || !phone || !church) {
+        showStatus('Veuillez remplir tous les champs obligatoires.', 'error');
+        return;
+      }
+
+      // Disable button and show loading
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner"></span> Inscription en cours...';
+      formStatus.innerHTML = '';
+
+      const ticketId = generateTicketId();
+      const timestamp = new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Douala' });
+
+      // Data to send
+      const formData = {
+        full_name: fullName,
+        gender: gender,
+        phone: phone,
+        church: church,
+        email: email || 'N/A',
+        ticket_id: ticketId,
+        timestamp: timestamp
+      };
+
+      try {
+        // Send to Google Sheets via GET params (POST + no-cors drops the body)
+        try {
+          const params = new URLSearchParams({
+            action: 'register',
+            full_name: formData.full_name,
+            gender: formData.gender,
+            phone: formData.phone,
+            church: formData.church,
+            email: formData.email,
+            ticket_id: formData.ticket_id,
+            timestamp: formData.timestamp
+          });
+          const url = GOOGLE_SCRIPT_URL + '?' + params.toString();
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 5000);
+          const response = await fetch(url, { signal: controller.signal });
+          clearTimeout(timeout);
+          const result = await response.json();
+          console.log('API response:', result);
+          if (result.status === 'full') {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Réserver ma Place';
+            showStatus('Désolé, toutes les 100 places sont prises !', 'error');
+            document.getElementById('places-restantes').innerHTML = '<strong style="color:#c94c4c;">Complet — Plus de places disponibles</strong>';
+            return;
+          }
+        } catch (err) {
+          console.warn('Envoi API échoué (timeout ou réseau):', err);
+        }
+
+        // ✅ Générer le QR code et le ticket
+        showTicket(formData);
+
+      } catch (err) {
+        console.error('Erreur:', err);
+        showStatus('Une erreur est survenue. Votre ticket a été généré localement.', 'error');
+        showTicket(formData);
+      }
+    });
+
+    function showStatus(msg, type) {
+      formStatus.innerHTML = `<div class="status-msg ${type}">${msg}</div>`;
+    }
+
+    // =============================================
+    // SHOW TICKET WITH QR CODE
+    // =============================================
+    function showTicket(data) {
+      // Hide form, show ticket
+      document.getElementById('form-container').style.display = 'none';
+      const confirmation = document.getElementById('confirmation');
+      confirmation.style.display = 'block';
+
+      // Generate QR Code — this is done INDEPENDENTLY of Google Sheets
+      const qrCanvas = document.getElementById('qrcodeCanvas');
+      const qr = new QRious({
+        element: qrCanvas,
+        value: JSON.stringify({
+          id: data.ticket_id,
+          name: data.full_name,
+          phone: data.phone,
+          event: 'JMC Soirée Cinéma 2026'
+        }),
+        size: 180,
+        backgroundAlpha: 1,
+        background: '#ffffff',
+        foreground: '#0a1628',
+        level: 'M'
+      });
+
+      // Fill ticket details
+      document.getElementById('ticketDetails').innerHTML = `
+        <div class="ticket-detail-row">
+          <span class="ticket-detail-label">Nom</span>
+          <span class="ticket-detail-value">${data.full_name}</span>
+        </div>
+        <div class="ticket-detail-row">
+          <span class="ticket-detail-label">Téléphone</span>
+          <span class="ticket-detail-value">${data.phone}</span>
+        </div>
+        <div class="ticket-detail-row">
+          <span class="ticket-detail-label">Église</span>
+          <span class="ticket-detail-value">${data.church}</span>
+        </div>
+        <div class="ticket-detail-row">
+          <span class="ticket-detail-label">Lieu</span>
+          <span class="ticket-detail-value">Salle de l'Auditorium</span>
+        </div>
+      `;
+
+      document.getElementById('ticketId').textContent = data.ticket_id;
+
+      // Smooth scroll to ticket
+      confirmation.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // =============================================
+    // DOWNLOAD TICKET AS IMAGE
+    // =============================================
+    function downloadTicket() {
+      const ticketCard = document.getElementById('ticket-card');
+      const btn = document.getElementById('downloadTicketBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Génération...';
+
+      html2canvas(ticketCard, {
+        backgroundColor: '#0f1f3d',
+        scale: 2,
+        useCORS: true,
+        logging: false
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `ticket-cinema-jmc-${document.getElementById('ticketId').textContent}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        btn.disabled = false;
+        btn.textContent = 'Télécharger mon Ticket';
+      }).catch(err => {
+        console.error('Erreur téléchargement:', err);
+        btn.disabled = false;
+        btn.textContent = 'Télécharger mon Ticket';
+      });
+    }
+
+    // =============================================
+    // RESET FORM — allows multiple registrations
+    // =============================================
+    function resetForm() {
+      document.getElementById('form-container').style.display = 'block';
+      document.getElementById('confirmation').style.display = 'none';
+      document.getElementById('regForm').reset();
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Réserver ma Place';
+      formStatus.innerHTML = '';
+      document.getElementById('inscription').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // =============================================
+    // SMOOTH SCROLL for anchor links
+    // =============================================
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
 
 </body>
 </html>
